@@ -98,8 +98,14 @@ def recrop(data: list[dict]) -> list[dict]:
         photo_crop.save(str(photo_path), "JPEG", quality=87)
         entry["photo_image"] = f"images/photo_{page_num:03d}_{fish_index+1}.jpg"
 
-        # ── 解説画像: セクション行 全幅（余白なし・情報を切らない） ────
-        section_crop = img.crop((0, sec_top, w, sec_bot))
+        # ── 解説画像: セクション行 全幅（上下3%バッファ付き） ──────────
+        buf          = int(sec_h * 0.03)
+        section_crop = img.crop((
+            0,
+            max(0, sec_top - buf),
+            w,
+            min(h, sec_bot + buf),
+        ))
         section_path = IMAGES_DIR / f"section_{page_num:03d}_{fish_index+1}.jpg"
         section_crop.save(str(section_path), "JPEG", quality=85)
         entry["page_image"] = f"images/section_{page_num:03d}_{fish_index+1}.jpg"
