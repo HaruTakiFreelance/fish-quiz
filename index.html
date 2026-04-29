@@ -276,32 +276,12 @@
   }
   .photo-frame img {
     width: 100%;
-    height: 240px;
-    object-fit: cover;
+    max-height: 55vw;
+    object-fit: contain;
     display: block;
     transition: opacity 0.3s;
+    background: var(--bg1);
   }
-  .photo-frame .photo-label {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 28px 14px 12px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.7);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  /* 名前モード表示 */
-  .name-frame {
-    border-radius: var(--radius);
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    padding: 24px 20px;
-    text-align: center;
-  }
-  .name-ja { font-size: 2rem; font-weight: 800; letter-spacing: -0.01em; }
-  .name-sci { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 6px; }
 
   /* 選択肢 */
   .choices { display: grid; gap: 8px; }
@@ -492,17 +472,6 @@
   </div>
 
   <div class="glass-card">
-    <div class="mode-grid">
-      <button class="mode-btn active" data-mode="photo" onclick="selectMode(this)">
-        <div class="mode-title">📷 写真クイズ</div>
-        <div class="mode-desc">魚の写真を見て、名前を当てる</div>
-      </button>
-      <button class="mode-btn" data-mode="name" onclick="selectMode(this)">
-        <div class="mode-title">🔤 名前クイズ</div>
-        <div class="mode-desc">魚の名前を見て、どんな魚か確認する</div>
-      </button>
-    </div>
-
     <div class="settings">
       <div class="setting-row">
         <span class="setting-label">出題数</span>
@@ -543,13 +512,7 @@
     <div class="question-num" id="question-num">問題 1 / 20</div>
 
     <div class="photo-frame" id="photo-wrap">
-      <img id="question-img" src="" alt="この魚は何？" loading="eager">
-      <div class="photo-label">��の魚の名前は？</div>
-    </div>
-
-    <div class="name-frame hidden" id="name-wrap">
-      <div class="name-ja" id="name-ja"></div>
-      <div class="name-sci" id="name-sci"></div>
+      <img id="question-img" src="" alt="fish" loading="eager">
     </div>
 
     <div class="choices" id="choices"></div>
@@ -639,13 +602,6 @@ async function loadData() {
   show("start-screen");
 }
 
-// ── モード選択 ────────────────────────────────────────────────────
-function selectMode(btn) {
-  document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  mode = btn.dataset.mode;
-}
-
 // ── ランダム選択肢生成 ────────────────────────────────────────────
 function makeChoices(correctItem) {
   const pool = fishData.filter(f => f.japanese_name !== correctItem.japanese_name);
@@ -692,22 +648,10 @@ function showQuestion() {
   document.getElementById("question-num").textContent = `問題 ${current + 1} / ${questions.length}`;
   document.getElementById("header-score").textContent = `${correct} / ${current}`;
 
-  const photoWrap = document.getElementById("photo-wrap");
-  const nameWrap  = document.getElementById("name-wrap");
-
-  if (mode === "photo") {
-    photoWrap.classList.remove("hidden");
-    nameWrap.classList.add("hidden");
-    const img = document.getElementById("question-img");
-    img.style.opacity = "0";
-    img.src = q.photo_image;
-    img.onload = () => { img.style.opacity = "1"; };
-  } else {
-    photoWrap.classList.add("hidden");
-    nameWrap.classList.remove("hidden");
-    document.getElementById("name-ja").textContent = q.japanese_name;
-    document.getElementById("name-sci").textContent = q.scientific_name || "";
-  }
+  const img = document.getElementById("question-img");
+  img.style.opacity = "0";
+  img.src = q.photo_image;
+  img.onload = () => { img.style.opacity = "1"; };
 
   const choices = makeChoices(q);
   const container = document.getElementById("choices");
