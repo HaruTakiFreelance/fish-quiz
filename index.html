@@ -130,14 +130,14 @@
   }
 
   /* モードボタン */
-  .mode-grid { display: grid; gap: 8px; padding: 16px; }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 16px 8px; }
   .mode-btn {
     background: transparent;
     border: 1px solid var(--glass-border);
     border-radius: 12px;
-    padding: 14px 16px;
+    padding: 14px 12px;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: all 0.2s var(--ease);
     color: var(--text);
     position: relative;
@@ -156,8 +156,47 @@
     background: var(--cyan-dim);
   }
   .mode-btn.active::before { opacity: 1; }
-  .mode-btn .mode-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; position: relative; }
-  .mode-btn .mode-desc  { font-size: 0.78rem; color: var(--muted); position: relative; }
+  .mode-btn .mode-icon  { font-size: 1.4rem; display: block; margin-bottom: 6px; position: relative; }
+  .mode-btn .mode-title { font-weight: 700; font-size: 0.88rem; position: relative; }
+
+  /* 名前入力エリア */
+  .input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fish-input {
+    width: 100%;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+    caret-color: var(--cyan);
+  }
+  .fish-input::placeholder { color: var(--muted); font-weight: 400; }
+  .fish-input:focus { border-color: var(--cyan); }
+  .fish-input.correct { border-color: var(--correct); background: var(--correct-dim); }
+  .fish-input.wrong   { border-color: var(--wrong);   background: var(--wrong-dim); animation: shake 0.4s ease; }
+  .submit-btn {
+    width: 100%;
+    background: var(--glass);
+    border: 1px solid var(--cyan);
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--cyan);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .submit-btn:active { transform: scale(0.98); background: var(--cyan-dim); }
+  .submit-btn:disabled { opacity: 0.4; cursor: default; }
 
   /* 設定行 */
   .settings { padding: 0 16px 16px; display: grid; gap: 8px; }
@@ -364,8 +403,10 @@
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    background: white;
+    padding: 6px;
   }
-  .page-img-frame img { width: 100%; display: block; }
+  .page-img-frame img { width: 100%; display: block; border-radius: 10px; }
 
   .next-btn {
     width: 100%;
@@ -472,6 +513,17 @@
   </div>
 
   <div class="glass-card">
+    <div class="mode-grid">
+      <button class="mode-btn active" data-mode="choices" onclick="selectMode(this)">
+        <span class="mode-icon">🔢</span>
+        <span class="mode-title">4択モード</span>
+      </button>
+      <button class="mode-btn" data-mode="input" onclick="selectMode(this)">
+        <span class="mode-icon">✏️</span>
+        <span class="mode-title">名前入力モード</span>
+      </button>
+    </div>
+
     <div class="settings">
       <div class="setting-row">
         <span class="setting-label">出題数</span>
@@ -482,7 +534,7 @@
           <option value="0">全問</option>
         </select>
       </div>
-      <div class="setting-row">
+      <div class="setting-row" id="choices-row">
         <span class="setting-label">選択肢</span>
         <select id="choices-select">
           <option value="2">2択</option>
@@ -516,6 +568,11 @@
     </div>
 
     <div class="choices" id="choices"></div>
+
+    <div class="input-wrap hidden" id="input-wrap">
+      <input class="fish-input" id="fish-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="魚の名前を入力...">
+      <button class="submit-btn" id="submit-btn" onclick="answerByInput()">答える</button>
+    </div>
 
     <div class="result-panel" id="result-panel">
       <div class="result-banner" id="result-banner"></div>
@@ -573,7 +630,7 @@ let questions    = [];
 let current      = 0;
 let correct      = 0;
 let wrongItems   = [];
-let mode         = "photo";
+let mode         = "choices";   // "choices" | "input"
 let numChoices   = 4;
 let numQuestions = 20;
 let answered     = false;
@@ -600,6 +657,14 @@ async function loadData() {
     fishData = [];
   }
   show("start-screen");
+}
+
+// ── モード選択 ────────────────────────────────────────────────────
+function selectMode(btn) {
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  mode = btn.dataset.mode;
+  document.getElementById("choices-row").style.display = mode === "input" ? "none" : "";
 }
 
 // ── ランダム選択肢生成 ────────────────────────────────────────────
@@ -653,20 +718,38 @@ function showQuestion() {
   img.src = q.photo_image;
   img.onload = () => { img.style.opacity = "1"; };
 
-  const choices = makeChoices(q);
-  const container = document.getElementById("choices");
-  container.innerHTML = "";
-  const labels = ["A","B","C","D"];
-  choices.forEach((c, i) => {
-    const btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.innerHTML = `<span class="choice-label">${labels[i]}</span>${c.japanese_name}`;
-    btn.onclick = () => answer(c, q, btn);
-    container.appendChild(btn);
-  });
+  const choicesEl  = document.getElementById("choices");
+  const inputWrap  = document.getElementById("input-wrap");
+  const fishInput  = document.getElementById("fish-input");
+  const submitBtn  = document.getElementById("submit-btn");
+
+  if (mode === "choices") {
+    choicesEl.classList.remove("hidden");
+    inputWrap.classList.add("hidden");
+
+    const choices = makeChoices(q);
+    choicesEl.innerHTML = "";
+    const labels = ["A","B","C","D"];
+    choices.forEach((c, i) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.innerHTML = `<span class="choice-label">${labels[i]}</span>${c.japanese_name}`;
+      btn.onclick = () => answer(c, q, btn);
+      choicesEl.appendChild(btn);
+    });
+  } else {
+    choicesEl.classList.add("hidden");
+    inputWrap.classList.remove("hidden");
+    fishInput.value = "";
+    fishInput.className = "fish-input";
+    fishInput.disabled = false;
+    submitBtn.disabled = false;
+    // Enterキーで送信
+    fishInput.onkeydown = (e) => { if (e.key === "Enter") answerByInput(); };
+    setTimeout(() => fishInput.focus(), 100);
+  }
 
   document.getElementById("result-panel").classList.remove("show");
-  document.getElementById("q-card").scrollTo({ top: 0 });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -703,6 +786,41 @@ function answer(chosen, correctItem, btn) {
   const panel = document.getElementById("result-panel");
   panel.classList.add("show");
 
+  setTimeout(() => panel.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+}
+
+// ── 名前入力モード回答処理 ────────────────────────────────────────
+function answerByInput() {
+  if (answered) return;
+  const q = questions[current];
+  const fishInput = document.getElementById("fish-input");
+  const submitBtn = document.getElementById("submit-btn");
+  const typed = fishInput.value.trim();
+  if (!typed) return;
+
+  answered = true;
+  fishInput.disabled = true;
+  submitBtn.disabled = true;
+
+  const isCorrect = typed === q.japanese_name;
+
+  fishInput.classList.add(isCorrect ? "correct" : "wrong");
+
+  const banner = document.getElementById("result-banner");
+  if (isCorrect) {
+    banner.className = "result-banner ok";
+    banner.textContent = "正解！";
+    correct++;
+  } else {
+    banner.className = "result-banner fail";
+    banner.textContent = `不正解。正解：${q.japanese_name}`;
+    wrongItems.push(q);
+    try { localStorage.setItem("fishQuizWrong", JSON.stringify(wrongItems)); } catch {}
+  }
+
+  document.getElementById("page-img").src = q.page_image;
+  const panel = document.getElementById("result-panel");
+  panel.classList.add("show");
   setTimeout(() => panel.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
 }
 
