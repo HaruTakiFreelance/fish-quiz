@@ -2,388 +2,641 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>海水魚クイズ 🐟</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>海水魚クイズ</title>
 <style>
   :root {
-    --ocean: #006994;
-    --ocean-dark: #004d6e;
-    --ocean-light: #e0f4ff;
-    --coral: #ff6b6b;
-    --coral-dark: #e55555;
-    --correct: #2ecc71;
-    --wrong: #e74c3c;
-    --sand: #f5f0e8;
-    --text: #1a2535;
-    --muted: #6b7c93;
-    --radius: 16px;
-    --shadow: 0 4px 20px rgba(0,105,148,0.12);
+    --bg0: #050e1a;
+    --bg1: #0a1e30;
+    --bg2: #0e2a42;
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.12);
+    --cyan: #00d9ff;
+    --cyan-dim: rgba(0,217,255,0.15);
+    --teal: #00b4cc;
+    --correct: #00e896;
+    --correct-dim: rgba(0,232,150,0.15);
+    --wrong: #ff4d6d;
+    --wrong-dim: rgba(255,77,109,0.15);
+    --text: #e8f4f8;
+    --muted: rgba(232,244,248,0.5);
+    --radius: 18px;
+    --ease: cubic-bezier(0.16,1,0.3,1);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    overscroll-behavior: none;
+  }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
-    background: linear-gradient(160deg, #e0f4ff 0%, #f5f0e8 100%);
-    min-height: 100vh;
+    background: var(--bg0);
     color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   /* ── ヘッダー ── */
   .header {
-    background: var(--ocean);
-    color: white;
-    padding: 14px 20px;
-    display: flex;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: none;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    padding: 14px 20px;
+    padding-top: max(14px, env(safe-area-inset-top));
+    background: rgba(5,14,26,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
   }
-  .header h1 { font-size: 1.1rem; font-weight: 700; }
-  .score-badge {
-    background: rgba(255,255,255,0.2);
+  .header-title { font-size: 0.9rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; }
+  .score-pill {
+    background: var(--cyan-dim);
+    border: 1px solid var(--cyan);
     border-radius: 20px;
     padding: 4px 14px;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ── カード ── */
-  .card {
-    background: white;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    margin: 16px;
+  /* ── 画面共通 ── */
+  .screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
+  .screen.hidden { display: none !important; }
 
   /* ── スタート画面 ── */
   #start-screen {
-    padding: 40px 20px;
-    text-align: center;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,217,255,0.08) 0%, transparent 70%),
+      var(--bg0);
+    padding-top: max(60px, env(safe-area-inset-top));
   }
-  .fish-icon { font-size: 4rem; margin-bottom: 16px; }
-  #start-screen h2 { font-size: 1.6rem; color: var(--ocean); margin-bottom: 8px; }
-  #start-screen p  { color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
 
-  .mode-grid {
-    display: grid;
-    gap: 12px;
-    margin-bottom: 24px;
+  .logo-wrap {
+    text-align: center;
+    margin-bottom: 36px;
   }
+  .logo-fish {
+    font-size: 4.5rem;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 24px rgba(0,217,255,0.4));
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .logo-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
+  }
+
+  /* モードボタン */
+  .mode-grid { display: grid; gap: 8px; padding: 16px; }
   .mode-btn {
-    background: var(--ocean-light);
-    border: 2px solid transparent;
+    background: transparent;
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px 16px;
     cursor: pointer;
     text-align: left;
-    transition: all 0.2s;
+    transition: all 0.2s var(--ease);
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--cyan-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
   }
   .mode-btn.active {
-    border-color: var(--ocean);
-    background: white;
+    border-color: var(--cyan);
+    background: var(--cyan-dim);
   }
-  .mode-btn .mode-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
-  .mode-btn .mode-desc  { font-size: 0.82rem; color: var(--muted); }
+  .mode-btn.active::before { opacity: 1; }
+  .mode-btn .mode-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; position: relative; }
+  .mode-btn .mode-desc  { font-size: 0.78rem; color: var(--muted); position: relative; }
 
+  /* 設定行 */
+  .settings { padding: 0 16px 16px; display: grid; gap: 8px; }
   .setting-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
-    border-top: 1px solid #eee;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
   }
-  .setting-label { font-size: 0.9rem; color: var(--muted); }
+  .setting-label { font-size: 0.88rem; color: var(--muted); }
   select {
-    border: 1px solid #ddd;
+    background: rgba(0,217,255,0.1);
+    border: 1px solid rgba(0,217,255,0.3);
     border-radius: 8px;
     padding: 6px 10px;
-    font-size: 0.9rem;
-    background: white;
-    color: var(--text);
+    font-size: 0.88rem;
+    color: var(--cyan);
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
   }
 
   .start-btn {
     width: 100%;
-    background: var(--ocean);
-    color: white;
+    background: linear-gradient(135deg, var(--cyan), var(--teal));
+    color: var(--bg0);
     border: none;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 1.1rem;
-    font-weight: 700;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 18px;
+    font-size: 1rem;
+    font-weight: 800;
     cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.04em;
   }
-  .start-btn:hover { background: var(--ocean-dark); }
+  .start-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-  /* ── クイズ画面 ── */
-  #quiz-screen { display: none; }
-
-  .progress-bar-wrap {
-    height: 4px;
-    background: #e0e0e0;
-  }
-  .progress-bar {
-    height: 100%;
-    background: var(--ocean);
-    transition: width 0.4s ease;
-  }
-
-  .question-num {
-    padding: 10px 16px 0;
-    font-size: 0.8rem;
+  #data-status {
+    font-size: 0.78rem;
     color: var(--muted);
-    font-weight: 600;
-  }
-
-  /* 問題画像 */
-  .question-img-wrap {
-    position: relative;
-    background: #1a2535;
-  }
-  .question-img-wrap img {
-    width: 100%;
-    max-height: 240px;
-    object-fit: cover;
-    display: block;
-  }
-  .question-text {
-    padding: 16px;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5;
-    background: var(--ocean-light);
-    border-left: 4px solid var(--ocean);
-  }
-
-  /* 選択肢 */
-  .choices { padding: 14px 16px; display: grid; gap: 10px; }
-  .choice-btn {
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    background: white;
-    color: var(--text);
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .choice-btn:active { transform: scale(0.98); }
-  .choice-btn.correct { border-color: var(--correct); background: #eafaf1; color: #1a7a4a; }
-  .choice-btn.wrong   { border-color: var(--wrong);   background: #fdecea; color: #a93226; }
-  .choice-btn .choice-mark { font-size: 1.2rem; }
-
-  /* 正解後の解説 */
-  .result-panel {
-    display: none;
-    padding: 0 16px 16px;
-  }
-  .result-panel.show { display: block; }
-  .result-label {
-    font-size: 1rem;
-    font-weight: 700;
-    padding: 10px 0 12px;
-  }
-  .result-label.ok   { color: var(--correct); }
-  .result-label.fail { color: var(--wrong); }
-  .page-img-wrap img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  .next-btn {
-    width: 100%;
-    margin-top: 14px;
-    background: var(--ocean);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .next-btn:hover { background: var(--ocean-dark); }
-
-  /* ── 結果画面 ── */
-  #result-screen {
-    display: none;
-    padding: 40px 20px;
     text-align: center;
+    padding: 10px 16px 0;
   }
-  .result-icon { font-size: 4rem; margin-bottom: 16px; }
-  #result-screen h2 { font-size: 1.5rem; color: var(--ocean); margin-bottom: 8px; }
-  .score-big { font-size: 3rem; font-weight: 800; color: var(--ocean); margin: 16px 0; }
-  .score-detail { color: var(--muted); margin-bottom: 32px; }
-  .result-actions { display: grid; gap: 10px; }
-  .result-actions button {
-    border: none; border-radius: 12px; padding: 14px;
-    font-size: 1rem; font-weight: 700; cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .result-actions button:hover { opacity: 0.85; }
-  .btn-retry   { background: var(--ocean); color: white; }
-  .btn-wrong   { background: var(--coral); color: white; }
-  .btn-home    { background: #eee; color: var(--text); }
 
   /* ── ローディング ── */
   #loading {
-    display: none;
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
+    background: var(--bg0);
+    gap: 20px;
   }
   .spinner {
-    width: 40px; height: 40px;
-    border: 4px solid #e0e0e0;
-    border-top-color: var(--ocean);
+    width: 48px; height: 48px;
+    border: 3px solid rgba(0,217,255,0.2);
+    border-top-color: var(--cyan);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
+    animation: spin 0.9s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { color: var(--muted); font-size: 0.9rem; }
+
+  /* ── クイズ画面 ── */
+  #quiz-screen {
+    padding: 0;
+    justify-content: flex-start;
+    padding-top: max(56px, calc(env(safe-area-inset-top) + 56px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background:
+      radial-gradient(ellipse 100% 60% at 50% 0%, rgba(0,100,148,0.2) 0%, transparent 60%),
+      var(--bg0);
+  }
+
+  /* プログレス */
+  .progress-wrap {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--cyan));
+    transition: width 0.4s var(--ease);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  /* 問題カード */
+  .q-card {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+  }
+
+  .question-num {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* 写真 */
+  .photo-frame {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s;
+  }
+  .photo-frame .photo-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 28px 14px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* 名前モード表示 */
+  .name-frame {
+    border-radius: var(--radius);
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .name-ja { font-size: 2rem; font-weight: 800; letter-spacing: -0.01em; }
+  .name-sci { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 6px; }
+
+  /* 選択肢 */
+  .choices { display: grid; gap: 8px; }
+  .choice-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.15s var(--ease);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .choice-btn:active { transform: scale(0.98); }
+  .choice-label {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(0,217,255,0.1);
+    border: 1px solid rgba(0,217,255,0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+  .choice-btn.correct {
+    border-color: var(--correct);
+    background: var(--correct-dim);
+    animation: bounce-in 0.4s var(--ease);
+  }
+  .choice-btn.correct .choice-label { background: var(--correct); border-color: var(--correct); color: var(--bg0); }
+  .choice-btn.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-dim);
+    animation: shake 0.4s ease;
+  }
+  .choice-btn.wrong .choice-label { background: var(--wrong); border-color: var(--wrong); color: white; }
+
+  @keyframes bounce-in {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    60% { transform: translateX(6px); }
+  }
+
+  /* 正解パネル */
+  .result-panel {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 8px;
+  }
+  .result-panel.show { display: flex; }
+
+  .result-banner {
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-banner.ok   { background: var(--correct-dim); border: 1px solid var(--correct); color: var(--correct); }
+  .result-banner.fail { background: var(--wrong-dim);   border: 1px solid var(--wrong);   color: var(--wrong); }
+
+  .page-img-frame {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .page-img-frame img { width: 100%; display: block; }
+
+  .next-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--cyan), var(--teal));
+    color: var(--bg0);
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.04em;
+  }
+  .next-btn:active { transform: scale(0.98); }
+
+  /* ── 結果画面 ── */
+  #result-screen {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0,217,255,0.07) 0%, transparent 70%),
+      var(--bg0);
+    gap: 24px;
+    text-align: center;
+  }
+
+  .result-ring {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+  }
+  .result-ring svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 10; }
+  .ring-fg { fill: none; stroke: var(--cyan); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s var(--ease); stroke-dasharray: 339.3; stroke-dashoffset: 339.3; }
+  .result-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .result-pct { font-size: 2rem; font-weight: 800; color: var(--cyan); }
+  .result-pct-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; letter-spacing: 0.06em; }
+
+  .result-headline { font-size: 1.5rem; font-weight: 800; }
+  .result-sub { font-size: 0.88rem; color: var(--muted); }
+
+  .result-stats {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+  }
+  .stat-box {
+    flex: 1;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-num { font-size: 1.6rem; font-weight: 800; }
+  .stat-num.ok   { color: var(--correct); }
+  .stat-num.fail { color: var(--wrong); }
+  .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 3px; font-weight: 600; }
+
+  .result-actions {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .result-actions button {
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .result-actions button:active { transform: scale(0.97); opacity: 0.85; }
+  .btn-retry { background: linear-gradient(135deg, var(--cyan), var(--teal)); color: var(--bg0); }
+  .btn-wrong { background: rgba(255,77,109,0.15); border: 1px solid var(--wrong) !important; color: var(--wrong); }
+  .btn-home  { background: var(--glass); border: 1px solid var(--glass-border) !important; color: var(--muted); }
 </style>
 </head>
 <body>
 
+<!-- ヘッダー（クイズ中のみ表示） -->
+<header class="header" id="quiz-header">
+  <span class="header-title">🐠 海水魚クイズ</span>
+  <span class="score-pill" id="header-score">0 / 0</span>
+</header>
+
 <!-- スタート画面 -->
-<div id="start-screen" class="card">
-  <div class="fish-icon">🐟</div>
-  <h2>海水魚クイズ</h2>
-  <p>ネイチャーウォッチングガイドブック<br>海水魚の写真から名前を当てよう！</p>
-
-  <div class="mode-grid">
-    <button class="mode-btn active" data-mode="photo" onclick="selectMode(this)">
-      <div class="mode-title">📷 写真クイズ</div>
-      <div class="mode-desc">魚の写真を見て、名前を当てる</div>
-    </button>
-    <button class="mode-btn" data-mode="name" onclick="selectMode(this)">
-      <div class="mode-title">🔤 名前クイズ</div>
-      <div class="mode-desc">魚の名前を見て、どんな魚か確認する</div>
-    </button>
+<div class="screen" id="start-screen">
+  <div class="logo-wrap">
+    <span class="logo-fish">🐠</span>
+    <div class="logo-title">海水魚クイズ</div>
+    <div class="logo-sub">ネイチャーウォッチングガイドブックで<br>海水魚を完全制覇しよう</div>
   </div>
 
-  <div class="setting-row">
-    <span class="setting-label">出題数</span>
-    <select id="count-select">
-      <option value="10">10問</option>
-      <option value="20" selected>20問</option>
-      <option value="30">30問</option>
-      <option value="0">全問</option>
-    </select>
-  </div>
-  <div class="setting-row">
-    <span class="setting-label">選択肢数</span>
-    <select id="choices-select">
-      <option value="2">2択</option>
-      <option value="4" selected>4択</option>
-    </select>
-  </div>
+  <div class="glass-card">
+    <div class="mode-grid">
+      <button class="mode-btn active" data-mode="photo" onclick="selectMode(this)">
+        <div class="mode-title">📷 写真クイズ</div>
+        <div class="mode-desc">魚の写真を見て、名前を当てる</div>
+      </button>
+      <button class="mode-btn" data-mode="name" onclick="selectMode(this)">
+        <div class="mode-title">🔤 名前クイズ</div>
+        <div class="mode-desc">魚の名前を見て、どんな魚か確認する</div>
+      </button>
+    </div>
 
-  <div id="data-status" style="color:var(--muted);font-size:0.82rem;margin-top:16px;text-align:center;"></div>
-  <button class="start-btn" onclick="startQuiz()">クイズを始める 🚀</button>
+    <div class="settings">
+      <div class="setting-row">
+        <span class="setting-label">出題数</span>
+        <select id="count-select">
+          <option value="10">10問</option>
+          <option value="20" selected>20問</option>
+          <option value="30">30問</option>
+          <option value="0">全問</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">選択肢</span>
+        <select id="choices-select">
+          <option value="2">2択</option>
+          <option value="4" selected>4択</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="data-status"></div>
+    <button class="start-btn" onclick="startQuiz()">START →</button>
+  </div>
 </div>
 
 <!-- ローディング -->
-<div id="loading">
+<div class="screen hidden" id="loading">
   <div class="spinner"></div>
-  <p>データを読み込み中...</p>
+  <p>読み込み中...</p>
 </div>
 
 <!-- クイズ画面 -->
-<div class="header" id="quiz-header" style="display:none;">
-  <h1>🐟 海水魚クイズ</h1>
-  <div class="score-badge" id="header-score">0 / 0</div>
-</div>
-
-<div id="quiz-screen" class="card">
-  <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
-  <div class="question-num" id="question-num"></div>
-
-  <!-- 写真モード: 魚写真を表示 -->
-  <div class="question-img-wrap" id="photo-wrap">
-    <img id="question-img" src="" alt="魚の写真">
+<div class="screen hidden" id="quiz-screen">
+  <div class="progress-wrap" style="width:100%;">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
   </div>
 
-  <!-- 名前モード: 魚名を表示 -->
-  <div class="question-text" id="name-wrap" style="display:none;"></div>
+  <div class="q-card" id="q-card">
+    <div class="question-num" id="question-num">問題 1 / 20</div>
 
-  <div class="choices" id="choices"></div>
-
-  <div class="result-panel" id="result-panel">
-    <div class="result-label" id="result-label"></div>
-    <div class="page-img-wrap">
-      <img id="page-img" src="" alt="解説ページ">
+    <div class="photo-frame" id="photo-wrap">
+      <img id="question-img" src="" alt="この魚は何？" loading="eager">
+      <div class="photo-label">��の魚の名前は？</div>
     </div>
-    <button class="next-btn" onclick="nextQuestion()">次の問題 →</button>
+
+    <div class="name-frame hidden" id="name-wrap">
+      <div class="name-ja" id="name-ja"></div>
+      <div class="name-sci" id="name-sci"></div>
+    </div>
+
+    <div class="choices" id="choices"></div>
+
+    <div class="result-panel" id="result-panel">
+      <div class="result-banner" id="result-banner"></div>
+      <div class="page-img-frame">
+        <img id="page-img" src="" alt="解説">
+      </div>
+      <button class="next-btn" onclick="nextQuestion()">次の問題 →</button>
+    </div>
   </div>
 </div>
 
 <!-- 結果画面 -->
-<div id="result-screen" class="card">
-  <div class="result-icon" id="result-icon">🎉</div>
-  <h2>クイズ終了！</h2>
-  <div class="score-big" id="final-score"></div>
-  <div class="score-detail" id="score-detail"></div>
+<div class="screen hidden" id="result-screen">
+  <div class="result-ring">
+    <svg viewBox="0 0 120 120" width="140" height="140">
+      <circle class="ring-bg" cx="60" cy="60" r="54"/>
+      <circle class="ring-fg" id="ring-fg" cx="60" cy="60" r="54"/>
+    </svg>
+    <div class="result-ring-text">
+      <span class="result-pct" id="result-pct">0%</span>
+      <span class="result-pct-label">正解率</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="result-headline" id="result-headline">クイズ終了！</div>
+    <div class="result-sub" id="result-sub"></div>
+  </div>
+
+  <div class="result-stats">
+    <div class="stat-box">
+      <div class="stat-num ok" id="stat-correct">0</div>
+      <div class="stat-label">正解</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num fail" id="stat-wrong">0</div>
+      <div class="stat-label">不正解</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-total" style="color:var(--text)">0</div>
+      <div class="stat-label">出題数</div>
+    </div>
+  </div>
+
   <div class="result-actions">
-    <button class="btn-retry" onclick="retryQuiz()">もう一度 🔄</button>
-    <button class="btn-wrong" id="btn-wrong-only" onclick="retryWrong()" style="display:none">間違えた魚だけ復習 🎯</button>
-    <button class="btn-home"  onclick="goHome()">ホームへ 🏠</button>
+    <button class="btn-retry" onclick="retryQuiz()">もう一度チャレンジ 🔄</button>
+    <button class="btn-wrong hidden" id="btn-wrong-only" onclick="retryWrong()">間違えた魚を復習 🎯</button>
+    <button class="btn-home" onclick="goHome()">ホームへ戻る</button>
   </div>
 </div>
 
 <script>
-// ── データ ──────────────────────────────────────────────────────────
-let fishData    = [];
-let questions   = [];
-let current     = 0;
-let correct     = 0;
-let wrongItems  = [];
-let mode        = "photo";
-let numChoices  = 4;
+let fishData     = [];
+let questions    = [];
+let current      = 0;
+let correct      = 0;
+let wrongItems   = [];
+let mode         = "photo";
+let numChoices   = 4;
 let numQuestions = 20;
-let answered    = false;
+let answered     = false;
 
-// localStorage から進捗を復元
-function loadProgress() {
-  try {
-    const saved = localStorage.getItem("fishQuizWrong");
-    return saved ? JSON.parse(saved) : [];
-  } catch { return []; }
-}
-function saveWrong(items) {
-  localStorage.setItem("fishQuizWrong", JSON.stringify(items));
+// ── 画面切替ヘルパー ─────────────────────────────────────────────
+function show(id) {
+  ["start-screen","loading","quiz-screen","result-screen"].forEach(s => {
+    document.getElementById(s).classList.toggle("hidden", s !== id);
+  });
 }
 
 // ── データ読み込み ────────────────────────────────────────────────
 async function loadData() {
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("start-screen").style.display = "none";
+  show("loading");
   try {
     const resp = await fetch("fish_data.json");
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) throw new Error();
     fishData = await resp.json();
     document.getElementById("data-status").textContent =
-      `📚 ${fishData.length}種の海水魚データを読み込みました`;
-  } catch (e) {
+      `📚 ${fishData.length}種のデータを読み込みました`;
+  } catch {
     document.getElementById("data-status").textContent =
       "⚠️ データ未生成。extract.py を実行してください。";
     fishData = [];
   }
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("start-screen").style.display = "block";
+  show("start-screen");
 }
 
 // ── モード選択 ────────────────────────────────────────────────────
@@ -393,12 +646,11 @@ function selectMode(btn) {
   mode = btn.dataset.mode;
 }
 
-// ── ランダム4択生成 ──────────────────────────────────────────────
-function makeChoices(correct_item) {
-  const pool = fishData.filter(f => f.japanese_name !== correct_item.japanese_name);
+// ── ランダム選択肢生成 ────────────────────────────────────────────
+function makeChoices(correctItem) {
+  const pool = fishData.filter(f => f.japanese_name !== correctItem.japanese_name);
   const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, numChoices - 1);
-  const all = [...shuffled, correct_item].sort(() => Math.random() - 0.5);
-  return all;
+  return [...shuffled, correctItem].sort(() => Math.random() - 0.5);
 }
 
 // ── クイズ開始 ────────────────────────────────────────────────────
@@ -406,24 +658,20 @@ function startQuiz(wrongOnly = false) {
   numChoices   = parseInt(document.getElementById("choices-select")?.value ?? 4);
   numQuestions = parseInt(document.getElementById("count-select")?.value ?? 20);
 
-  let pool = wrongOnly ? loadProgress() : [...fishData];
-  pool = pool.filter(f => f.photo_image && f.page_image);
+  let pool = wrongOnly
+    ? (() => { try { return JSON.parse(localStorage.getItem("fishQuizWrong") || "[]"); } catch { return []; } })()
+    : [...fishData];
 
-  if (pool.length === 0) {
-    alert("出題できるデータがありません。extract.py を先に実行してください。");
-    return;
-  }
+  pool = pool.filter(f => f.photo_image && f.page_image);
+  if (!pool.length) { alert("出題できるデータがありません。"); return; }
 
   pool = pool.sort(() => Math.random() - 0.5);
   questions = numQuestions === 0 ? pool : pool.slice(0, Math.min(numQuestions, pool.length));
 
   current = 0; correct = 0; wrongItems = []; answered = false;
 
-  document.getElementById("start-screen").style.display = "none";
-  document.getElementById("result-screen").style.display = "none";
   document.getElementById("quiz-header").style.display = "flex";
-  document.getElementById("quiz-screen").style.display = "block";
-
+  show("quiz-screen");
   showQuestion();
 }
 
@@ -431,9 +679,7 @@ function retryQuiz()  { startQuiz(false); }
 function retryWrong() { startQuiz(true); }
 function goHome() {
   document.getElementById("quiz-header").style.display = "none";
-  document.getElementById("quiz-screen").style.display = "none";
-  document.getElementById("result-screen").style.display = "none";
-  document.getElementById("start-screen").style.display = "block";
+  show("start-screen");
 }
 
 // ── 問題表示 ─────────────────────────────────────────────────────
@@ -441,120 +687,117 @@ function showQuestion() {
   answered = false;
   const q = questions[current];
 
-  // プログレス
   const pct = (current / questions.length) * 100;
   document.getElementById("progress-bar").style.width = pct + "%";
-  document.getElementById("question-num").textContent =
-    `問題 ${current + 1} / ${questions.length}`;
-  document.getElementById("header-score").textContent =
-    `${correct} / ${current}`;
+  document.getElementById("question-num").textContent = `問題 ${current + 1} / ${questions.length}`;
+  document.getElementById("header-score").textContent = `${correct} / ${current}`;
 
-  // モードに応じて問題表示
+  const photoWrap = document.getElementById("photo-wrap");
+  const nameWrap  = document.getElementById("name-wrap");
+
   if (mode === "photo") {
-    document.getElementById("photo-wrap").style.display = "block";
-    document.getElementById("name-wrap").style.display = "none";
+    photoWrap.classList.remove("hidden");
+    nameWrap.classList.add("hidden");
     const img = document.getElementById("question-img");
+    img.style.opacity = "0";
     img.src = q.photo_image;
-    img.alt = "この魚の名前は？";
+    img.onload = () => { img.style.opacity = "1"; };
   } else {
-    document.getElementById("photo-wrap").style.display = "none";
-    document.getElementById("name-wrap").style.display = "block";
-    document.getElementById("name-wrap").innerHTML =
-      `<span style="font-size:1.4rem">${q.japanese_name}</span>` +
-      (q.scientific_name ? `<br><span style="font-size:0.8rem;color:var(--muted);font-style:italic">${q.scientific_name}</span>` : "");
+    photoWrap.classList.add("hidden");
+    nameWrap.classList.remove("hidden");
+    document.getElementById("name-ja").textContent = q.japanese_name;
+    document.getElementById("name-sci").textContent = q.scientific_name || "";
   }
 
-  // 選択肢
   const choices = makeChoices(q);
   const container = document.getElementById("choices");
   container.innerHTML = "";
+  const labels = ["A","B","C","D"];
   choices.forEach((c, i) => {
     const btn = document.createElement("button");
     btn.className = "choice-btn";
-    const labels = ["A", "B", "C", "D"];
-    btn.innerHTML = `<span class="choice-mark" style="background:var(--ocean-light);border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--ocean);flex-shrink:0">${labels[i]}</span>${c.japanese_name}`;
-    btn.onclick = () => answer(c, q, btn, choices);
+    btn.innerHTML = `<span class="choice-label">${labels[i]}</span>${c.japanese_name}`;
+    btn.onclick = () => answer(c, q, btn);
     container.appendChild(btn);
   });
 
-  // 解説パネル非表示
-  const panel = document.getElementById("result-panel");
-  panel.classList.remove("show");
+  document.getElementById("result-panel").classList.remove("show");
+  document.getElementById("q-card").scrollTo({ top: 0 });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ── 回答処理 ─────────────────────────────────────────────────────
-function answer(chosen, correct_item, btn, allChoices) {
+function answer(chosen, correctItem, btn) {
   if (answered) return;
   answered = true;
 
-  const isCorrect = chosen.japanese_name === correct_item.japanese_name;
+  const isCorrect = chosen.japanese_name === correctItem.japanese_name;
 
-  // 全ボタンを無効化・色付け
   document.querySelectorAll(".choice-btn").forEach(b => {
     b.onclick = null;
-    const name = b.textContent.trim().slice(1); // ラベル1文字除去
-    if (b === btn) {
-      b.classList.add(isCorrect ? "correct" : "wrong");
-    }
+    if (b.textContent.includes(correctItem.japanese_name)) b.classList.add("correct");
   });
-
-  // 正解ボタンを強調（不正解時）
   if (!isCorrect) {
-    document.querySelectorAll(".choice-btn").forEach(b => {
-      if (b.textContent.includes(correct_item.japanese_name)) {
-        b.classList.add("correct");
-      }
-    });
-    wrongItems.push(correct_item);
-    saveWrong(wrongItems);
+    btn.classList.remove("correct");
+    btn.classList.add("wrong");
+    wrongItems.push(correctItem);
+    try { localStorage.setItem("fishQuizWrong", JSON.stringify(wrongItems)); } catch {}
   } else {
     correct++;
   }
 
-  // 解説パネル表示
-  const label = document.getElementById("result-label");
-  label.textContent = isCorrect ? "✅ 正解！" : `❌ 不正解。正解は「${correct_item.japanese_name}」`;
-  label.className = "result-label " + (isCorrect ? "ok" : "fail");
+  const banner = document.getElementById("result-banner");
+  if (isCorrect) {
+    banner.className = "result-banner ok";
+    banner.textContent = "✅ 正解！";
+  } else {
+    banner.className = "result-banner fail";
+    banner.textContent = `❌ 不正解。正解：${correctItem.japanese_name}`;
+  }
 
-  document.getElementById("page-img").src = correct_item.page_image;
-
+  document.getElementById("page-img").src = correctItem.page_image;
   const panel = document.getElementById("result-panel");
   panel.classList.add("show");
-  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  setTimeout(() => panel.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
 }
 
 // ── 次の問題 ─────────────────────────────────────────────────────
 function nextQuestion() {
   current++;
-  if (current >= questions.length) {
-    showResult();
-  } else {
-    showQuestion();
-    document.getElementById("quiz-screen").scrollIntoView({ behavior: "smooth" });
-  }
+  if (current >= questions.length) showResult();
+  else showQuestion();
 }
 
 // ── 結果表示 ─────────────────────────────────────────────────────
 function showResult() {
   document.getElementById("quiz-header").style.display = "none";
-  document.getElementById("quiz-screen").style.display = "none";
+  show("result-screen");
 
   const pct = Math.round((correct / questions.length) * 100);
-  const icon = pct >= 80 ? "🎉" : pct >= 50 ? "💪" : "📖";
+  const headlines = pct >= 90 ? "パーフェクト！🎉" : pct >= 70 ? "よくできました！💪" : pct >= 50 ? "もう少し！📖" : "要復習です 🐠";
 
-  document.getElementById("result-icon").textContent = icon;
-  document.getElementById("final-score").textContent = `${correct} / ${questions.length}`;
-  document.getElementById("score-detail").textContent =
-    `正解率 ${pct}%　間違い ${wrongItems.length}問`;
+  document.getElementById("result-headline").textContent = headlines;
+  document.getElementById("result-sub").textContent = `${questions.length}問中 ${correct}問正解`;
+  document.getElementById("result-pct").textContent  = pct + "%";
+  document.getElementById("stat-correct").textContent = correct;
+  document.getElementById("stat-wrong").textContent   = wrongItems.length;
+  document.getElementById("stat-total").textContent   = questions.length;
+
+  const circumference = 2 * Math.PI * 54;
+  const offset = circumference * (1 - pct / 100);
+  const ring = document.getElementById("ring-fg");
+  ring.style.strokeDasharray  = circumference;
+  ring.style.strokeDashoffset = circumference;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    ring.style.strokeDashoffset = offset;
+    ring.style.stroke = pct >= 70 ? "var(--correct)" : pct >= 50 ? "var(--cyan)" : "var(--wrong)";
+  }));
 
   const btnWrong = document.getElementById("btn-wrong-only");
-  btnWrong.style.display = wrongItems.length > 0 ? "block" : "none";
-
-  document.getElementById("result-screen").style.display = "block";
-  document.getElementById("header-score").textContent = `${correct} / ${questions.length}`;
+  btnWrong.classList.toggle("hidden", wrongItems.length === 0);
 }
 
-// ── 初期化 ────────────────────────────────────────────────────────
 loadData();
 </script>
 </body>
