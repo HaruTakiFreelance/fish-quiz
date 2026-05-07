@@ -19,12 +19,12 @@ IMAGES_DIR = Path(__file__).parent / "images"
 DATA_FILE  = Path(__file__).parent / "fish_data.json"
 
 # 写真が左側にある場合の列範囲（全幅に対する割合）
-PHOTO_LEFT_START  = 0.00
-PHOTO_LEFT_END    = 0.52   # 広めに取って魚を切らない
+PHOTO_LEFT_START  = 0.04   # 左端の縦書き科名帯を除く（答えのヒントになるため）
+PHOTO_LEFT_END    = 0.49   # テキスト列との境界を安全に除く
 
 # 写真が右側にある場合の列範囲
-PHOTO_RIGHT_START = 0.44   # 広めに取って魚を切らない
-PHOTO_RIGHT_END   = 1.00
+PHOTO_RIGHT_START = 0.45   # テキスト列との境界バッファ
+PHOTO_RIGHT_END   = 0.96   # 右端の縦書き科名帯を除く（答えのヒントになるため）
 
 # セクション内の縦トリム
 # 上端マージン: セパレータ線だけ除く（最小限）
