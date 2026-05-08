@@ -35,19 +35,26 @@ SECTION_BOTTOM_MARGIN = 0.05
 
 def classify_photo_side(section_img: Image.Image) -> str:
     """
-    セクション画像の左半分と右半分の輝度標準偏差を比較して
-    写真がどちら側にあるかを判定する。
-    写真部分（グラデーション豊富）は std が高く、
-    テキスト部分（白地に黒文字）は std が低い傾向がある。
+    セクション画像の左右を「彩度の平均値」で比較して写真側を判定する。
+    海洋写真（青・緑・橙など色豊か）は彩度が高く、
+    白地テキスト・線画図解（無彩色）は彩度が低い。
+    中央20%（セパレータ帯）はスキップして干渉を避ける。
     """
-    gray = section_img.convert("L")
-    arr  = np.array(gray, dtype=np.float32)
-    mid  = arr.shape[1] // 2
+    arr = np.array(section_img, dtype=np.float32)  # shape: (H, W, 3)
+    w   = arr.shape[1]
 
-    left_std  = float(np.std(arr[:, :mid]))
-    right_std = float(np.std(arr[:, mid:]))
+    # セパレータ帯を避けて比較（左5〜45%、右55〜95%）
+    l_start, l_end = int(w * 0.05), int(w * 0.45)
+    r_start, r_end = int(w * 0.55), int(w * 0.95)
 
-    return "left" if left_std >= right_std else "right"
+    # 彩度の近似 = max(R,G,B) - min(R,G,B)（ピクセルごと）
+    left_region  = arr[:, l_start:l_end, :]
+    right_region = arr[:, r_start:r_end, :]
+
+    left_sat  = float(np.mean(left_region.max(axis=2)  - left_region.min(axis=2)))
+    right_sat = float(np.mean(right_region.max(axis=2) - right_region.min(axis=2)))
+
+    return "left" if left_sat >= right_sat else "right"
 
 
 def recrop(data: list[dict]) -> list[dict]:
