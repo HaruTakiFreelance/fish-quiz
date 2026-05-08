@@ -38,7 +38,7 @@
   {
     "page": 23,
     "fish_index": 2,
-    "japanese_name": "ジンベイザメ",
+    "japanese_name": "ジンベエザメ",
     "scientific_name": "Rhincodon typus",
     "family": "ジンベエザメ科",
     "page_image": "images/section_023_2.jpg",
@@ -128,7 +128,7 @@
   {
     "page": 26,
     "fish_index": 3,
-    "japanese_name": "アカシモクザメ",
+    "japanese_name": "アカシュモクザメ",
     "scientific_name": "Sphyrna lewini",
     "family": "シュモクザメ科",
     "page_image": "images/section_026_3.jpg",
@@ -794,7 +794,7 @@
   {
     "page": 52,
     "fish_index": 3,
-    "japanese_name": "ゴゴレマツカサ",
+    "japanese_name": "ヨゴレマツカサ",
     "scientific_name": "Myripristis murdjan",
     "family": "イットウダイ科",
     "page_image": "images/section_052_3.jpg",
@@ -884,7 +884,7 @@
   {
     "page": 56,
     "fish_index": 1,
-    "japanese_name": "イットウダイ",
+    "japanese_name": "トガリエビス",
     "scientific_name": "Sargocentron spiniferum",
     "family": "イットウダイ科",
     "page_image": "images/section_056_1.jpg",
@@ -1199,7 +1199,7 @@
   {
     "page": 67,
     "fish_index": 3,
-    "japanese_name": "ナガサゴ",
+    "japanese_name": "カサゴ",
     "scientific_name": "Sebastiscus marmoratus",
     "family": "スズキ科",
     "page_image": "images/section_067_3.jpg",
@@ -1262,7 +1262,7 @@
   {
     "page": 70,
     "fish_index": 1,
-    "japanese_name": "ムラソイ",
+    "japanese_name": "クロソイ",
     "scientific_name": "Sebastes schlegelii",
     "family": "メバル科",
     "page_image": "images/section_070_1.jpg",
@@ -2036,7 +2036,7 @@
   {
     "page": 99,
     "fish_index": 3,
-    "japanese_name": "マダラハゼ",
+    "japanese_name": "ヌノサラシ",
     "scientific_name": "Grammistes sexlineatus",
     "family": "ハタ科",
     "page_image": "images/section_099_3.jpg",
@@ -2630,7 +2630,7 @@
   {
     "page": 121,
     "fish_index": 3,
-    "japanese_name": "シムブリ",
+    "japanese_name": "ツムブリ",
     "scientific_name": "Elagatis bipinnulata",
     "family": "アジ科",
     "page_image": "images/section_121_3.jpg",
@@ -2639,7 +2639,7 @@
   {
     "page": 122,
     "fish_index": 1,
-    "japanese_name": "プリ",
+    "japanese_name": "ブリ",
     "scientific_name": "Seriola quinqueradiata",
     "family": "アジ科",
     "page_image": "images/section_122_1.jpg",
@@ -2738,7 +2738,7 @@
   {
     "page": 125,
     "fish_index": 3,
-    "japanese_name": "オニアジ",
+    "japanese_name": "オキアジ",
     "scientific_name": "Uraspis helvola",
     "family": "アジ科",
     "page_image": "images/section_125_3.jpg",
@@ -2936,7 +2936,7 @@
   {
     "page": 133,
     "fish_index": 1,
-    "japanese_name": "ケマササハナムロ",
+    "japanese_name": "クマササハナムロ",
     "scientific_name": "Pterocaesio tile",
     "family": "タカサゴ科",
     "page_image": "images/section_133_1.jpg",
@@ -2945,7 +2945,7 @@
   {
     "page": 133,
     "fish_index": 2,
-    "japanese_name": "ヤマトロモドキ",
+    "japanese_name": "ウメイロモドキ",
     "scientific_name": "Caesio teres",
     "family": "タカサゴ科",
     "page_image": "images/section_133_2.jpg",
@@ -3188,7 +3188,7 @@
   {
     "page": 142,
     "fish_index": 3,
-    "japanese_name": "ハマフエキ",
+    "japanese_name": "ハマフエフキ",
     "scientific_name": "Lethrinus nebulosus",
     "family": "フエフキダイ科",
     "page_image": "images/section_142_3.jpg",
@@ -3431,7 +3431,7 @@
   {
     "page": 151,
     "fish_index": 3,
-    "japanese_name": "ウミヅキチョウチョウオ",
+    "japanese_name": "ウミヅキチョウチョウウオ",
     "scientific_name": "Chaetodon bennetti",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_151_3.jpg",
@@ -3485,7 +3485,7 @@
   {
     "page": 153,
     "fish_index": 3,
-    "japanese_name": "チョウバン",
+    "japanese_name": "チョウハン",
     "scientific_name": "Chaetodon lunula",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_153_3.jpg",
@@ -3521,7 +3521,7 @@
   {
     "page": 155,
     "fish_index": 1,
-    "japanese_name": "ペニオチョウチョウウオ",
+    "japanese_name": "ベニオチョウチョウウオ",
     "scientific_name": "Chaetodon mertensii",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_155_1.jpg",
@@ -3557,7 +3557,7 @@
   {
     "page": 156,
     "fish_index": 2,
-    "japanese_name": "スミツキトノサダイ",
+    "japanese_name": "スミツキトノサマダイ",
     "scientific_name": "Chaetodon plebeius",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_156_2.jpg",
@@ -3566,7 +3566,7 @@
   {
     "page": 156,
     "fish_index": 3,
-    "japanese_name": "トノサダイ",
+    "japanese_name": "トノサマダイ",
     "scientific_name": "Chaetodon speculum",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_156_3.jpg",
@@ -3611,7 +3611,7 @@
   {
     "page": 158,
     "fish_index": 2,
-    "japanese_name": "テンクチョウチョウウオ",
+    "japanese_name": "ヤリカタギ",
     "scientific_name": "Chaetodon trifascialis",
     "family": "チョウチョウウオ科",
     "page_image": "images/section_158_2.jpg",
@@ -4052,7 +4052,7 @@
   {
     "page": 175,
     "fish_index": 2,
-    "japanese_name": "ニセクロジンベラ",
+    "japanese_name": "ホンソメワケベラ",
     "scientific_name": "Labroides dimidiatus",
     "family": "ベラ科",
     "page_image": "images/section_175_2.jpg",
@@ -4187,7 +4187,7 @@
   {
     "page": 180,
     "fish_index": 2,
-    "japanese_name": "タカノハダイ",
+    "japanese_name": "クギベラ",
     "scientific_name": "Gomphosus varius",
     "family": "タカノハダイ科",
     "page_image": "images/section_180_2.jpg",
@@ -4277,7 +4277,7 @@
   {
     "page": 183,
     "fish_index": 3,
-    "japanese_name": "セダルクマノミ",
+    "japanese_name": "セジロクマノミ",
     "scientific_name": "Amphiprion sandaracinos",
     "family": "スズメダイ科",
     "page_image": "images/section_183_3.jpg",
@@ -4565,7 +4565,7 @@
   {
     "page": 194,
     "fish_index": 2,
-    "japanese_name": "ハクセンスズメダイ",
+    "japanese_name": "ルリホシスズメダイ",
     "scientific_name": "Plectroglyphidodon lacrymatus",
     "family": "スズメダイ科",
     "page_image": "images/section_194_2.jpg",
@@ -4925,7 +4925,7 @@
   {
     "page": 207,
     "fish_index": 3,
-    "japanese_name": "イスズミ",
+    "japanese_name": "ノトイスズミ",
     "scientific_name": "Kyphosus bigibbus",
     "family": "イスズミ科",
     "page_image": "images/section_207_3.jpg",
@@ -5060,7 +5060,7 @@
   {
     "page": 213,
     "fish_index": 1,
-    "japanese_name": "タヌキペラ",
+    "japanese_name": "タヌキベラ",
     "scientific_name": "Bodianus izuensis",
     "family": "ベラ科",
     "page_image": "images/section_213_1.jpg",
@@ -5150,7 +5150,7 @@
   {
     "page": 217,
     "fish_index": 1,
-    "japanese_name": "キゾネダイ",
+    "japanese_name": "キツネダイ",
     "scientific_name": "Bodianus oxycephalus",
     "family": "ベラ科",
     "page_image": "images/section_217_1.jpg",
@@ -5231,7 +5231,7 @@
   {
     "page": 220,
     "fish_index": 2,
-    "japanese_name": "カマスペラ",
+    "japanese_name": "カマスベラ",
     "scientific_name": "Cheilio inermis",
     "family": "ペラ科",
     "page_image": "images/section_220_2.jpg",
@@ -5240,7 +5240,7 @@
   {
     "page": 220,
     "fish_index": 3,
-    "japanese_name": "ハゴペラ",
+    "japanese_name": "ハコベラ",
     "scientific_name": "Thalassoma quinquevittatum",
     "family": "ペラ科",
     "page_image": "images/section_220_3.jpg",
@@ -5357,7 +5357,7 @@
   {
     "page": 226,
     "fish_index": 1,
-    "japanese_name": "アカササノハペラ",
+    "japanese_name": "アカササノハベラ",
     "scientific_name": "Pseudolabrus eoethinus",
     "family": "ベラ科",
     "page_image": "images/section_226_1.jpg",
@@ -5366,7 +5366,7 @@
   {
     "page": 226,
     "fish_index": 2,
-    "japanese_name": "ホシササノハペラ",
+    "japanese_name": "ホシササノハベラ",
     "scientific_name": "Pseudolabrus sieboldi",
     "family": "ベラ科",
     "page_image": "images/section_226_2.jpg",
@@ -5690,7 +5690,7 @@
   {
     "page": 238,
     "fish_index": 3,
-    "japanese_name": "ゴガネキュウセン",
+    "japanese_name": "コガネキュウセン",
     "scientific_name": "Halichoeres chrysus",
     "family": "ベラ科",
     "page_image": "images/section_238_3.jpg",
@@ -6167,7 +6167,7 @@
   {
     "page": 259,
     "fish_index": 2,
-    "japanese_name": "ナンヨウダイ",
+    "japanese_name": "ナンヨウブダイ",
     "scientific_name": "Chlorurus microrhinos",
     "family": "ブダイ科",
     "page_image": "images/section_259_2.jpg",
@@ -6185,7 +6185,7 @@
   {
     "page": 260,
     "fish_index": 1,
-    "japanese_name": "プダイ",
+    "japanese_name": "ブダイ",
     "scientific_name": "Calotomus japonicus",
     "family": "ブダイ科",
     "page_image": "images/section_260_1.jpg",
@@ -6248,7 +6248,7 @@
   {
     "page": 263,
     "fish_index": 1,
-    "japanese_name": "イチモンジウブダイ",
+    "japanese_name": "オウムブダイ",
     "scientific_name": "Scarus psittacus",
     "family": "ブダイ科",
     "page_image": "images/section_263_1.jpg",
@@ -6320,7 +6320,7 @@
   {
     "page": 266,
     "fish_index": 3,
-    "japanese_name": "ダイダイフダイ",
+    "japanese_name": "ヒブダイ",
     "scientific_name": "Scarus ghobban",
     "family": "ブダイ科",
     "page_image": "images/section_266_3.jpg",
@@ -6329,7 +6329,7 @@
   {
     "page": 267,
     "fish_index": 1,
-    "japanese_name": "アオブダイ",
+    "japanese_name": "ヒブダイ",
     "scientific_name": "Scarus ghobban",
     "family": "ブダイ科",
     "page_image": "images/section_267_1.jpg",
@@ -6410,7 +6410,7 @@
   {
     "page": 271,
     "fish_index": 1,
-    "japanese_name": "イトヒキヌダイ",
+    "japanese_name": "イトヒキブダイ",
     "scientific_name": "Scarus altipinnis",
     "family": "ブダイ科",
     "page_image": "images/section_271_1.jpg",
@@ -6419,7 +6419,7 @@
   {
     "page": 271,
     "fish_index": 2,
-    "japanese_name": "ニシキヌダイ",
+    "japanese_name": "オウムブダイ",
     "scientific_name": "Scarus psittacus",
     "family": "ブダイ科",
     "page_image": "images/section_271_2.jpg",
@@ -6968,7 +6968,7 @@
   {
     "page": 292,
     "fish_index": 3,
-    "japanese_name": "ニセクロスジギンボ",
+    "japanese_name": "ニセクロスジギンポ",
     "scientific_name": "Aspidontus taeniatus",
     "family": "イソギンポ科",
     "page_image": "images/section_292_3.jpg",
@@ -6995,7 +6995,7 @@
   {
     "page": 293,
     "fish_index": 3,
-    "japanese_name": "ウナギギンボ",
+    "japanese_name": "ウナギギンポ",
     "scientific_name": "Xiphasia setifer",
     "family": "イソギンポ科",
     "page_image": "images/section_293_3.jpg",
@@ -7670,7 +7670,7 @@
   {
     "page": 319,
     "fish_index": 2,
-    "japanese_name": "キツバリ",
+    "japanese_name": "キヌバリ",
     "scientific_name": "Pterogobius elapoides",
     "family": "ハゼ科",
     "page_image": "images/section_319_2.jpg",
@@ -7877,7 +7877,7 @@
   {
     "page": 327,
     "fish_index": 1,
-    "japanese_name": "ヒレナガジリンボウ",
+    "japanese_name": "ヒレナガネジリンボウ",
     "scientific_name": "Stonogobiops nematodes",
     "family": "ハゼ科",
     "page_image": "images/section_327_1.jpg",
@@ -8183,7 +8183,7 @@
   {
     "page": 338,
     "fish_index": 2,
-    "japanese_name": "アカクリ",
+    "japanese_name": "アカククリ",
     "scientific_name": "Platax pinnatus",
     "family": "マンジュウダイ科",
     "page_image": "images/section_338_2.jpg",
@@ -8201,7 +8201,7 @@
   {
     "page": 339,
     "fish_index": 1,
-    "japanese_name": "ビフキアイゴ",
+    "japanese_name": "ヒフキアイゴ",
     "scientific_name": "Siganus unimaculatus",
     "family": "アイゴ科",
     "page_image": "images/section_339_1.jpg",
@@ -8444,7 +8444,7 @@
   {
     "page": 348,
     "fish_index": 2,
-    "japanese_name": "テンカハギモドキ",
+    "japanese_name": "テングハギモドキ",
     "scientific_name": "Naso hexacanthus",
     "family": "ニザダイ科",
     "page_image": "images/section_348_2.jpg",
@@ -8453,7 +8453,7 @@
   {
     "page": 348,
     "fish_index": 3,
-    "japanese_name": "ゴマニジダイ",
+    "japanese_name": "ゴマテングハギモドキ",
     "scientific_name": "Naso maculatus",
     "family": "ニザダイ科",
     "page_image": "images/section_348_3.jpg",
@@ -8471,7 +8471,7 @@
   {
     "page": 349,
     "fish_index": 2,
-    "japanese_name": "オニテングカハギ",
+    "japanese_name": "オニテングハギ",
     "scientific_name": "Naso brachycentron",
     "family": "ニザダイ科",
     "page_image": "images/section_349_2.jpg",
@@ -8723,7 +8723,7 @@
   {
     "page": 358,
     "fish_index": 3,
-    "japanese_name": "イシモンガラ",
+    "japanese_name": "イソモンガラ",
     "scientific_name": "Pseudobalistes fuscus",
     "family": "モンガラカワハギ科",
     "page_image": "images/section_358_3.jpg",
@@ -8894,7 +8894,7 @@
   {
     "page": 365,
     "fish_index": 1,
-    "japanese_name": "コクテンハギ",
+    "japanese_name": "イソモンガラ",
     "scientific_name": "Pseudobalistes fuscus",
     "family": "カワハギ科",
     "page_image": "images/section_365_1.jpg",
@@ -9047,7 +9047,7 @@
   {
     "page": 371,
     "fish_index": 1,
-    "japanese_name": "ゴンゴウフグ",
+    "japanese_name": "コンゴウフグ",
     "scientific_name": "Lactoria cornuta",
     "family": "ハコフグ科",
     "page_image": "images/section_371_1.jpg",
@@ -9056,7 +9056,7 @@
   {
     "page": 371,
     "fish_index": 2,
-    "japanese_name": "アミメズメ",
+    "japanese_name": "ウミスズメ",
     "scientific_name": "Lactoria diaphana",
     "family": "ハコフグ科",
     "page_image": "images/section_371_2.jpg",
@@ -9065,7 +9065,7 @@
   {
     "page": 371,
     "fish_index": 3,
-    "japanese_name": "シマウミズメ",
+    "japanese_name": "シマウミスズメ",
     "scientific_name": "Lactoria fornasini",
     "family": "ハコフグ科",
     "page_image": "images/section_371_3.jpg",
@@ -9101,7 +9101,7 @@
   {
     "page": 373,
     "fish_index": 1,
-    "japanese_name": "ミシルフグ",
+    "japanese_name": "ミゾレフグ",
     "scientific_name": "Arothron meleagris",
     "family": "フグ科",
     "page_image": "images/section_373_1.jpg",
@@ -9245,7 +9245,7 @@
   {
     "page": 378,
     "fish_index": 2,
-    "japanese_name": "インガキフグ",
+    "japanese_name": "イシガキフグ",
     "scientific_name": "Chilomycterus reticulatus",
     "family": "ハリセンボン科",
     "page_image": "images/section_378_2.jpg",
