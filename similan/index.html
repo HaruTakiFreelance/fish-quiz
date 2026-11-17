@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>シミラン諸島 生物図鑑</title>
+<style>
+:root{--bg:#06202e;--card:#0d3347;--ink:#e8f6fb;--sub:#8fc3d6;--acc:#3fd0c9;--seen:#f4c54b}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(#06202e,#031018) fixed;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(6,32,46,.94);backdrop-filter:blur(8px);padding:12px 14px 8px;border-bottom:1px solid #12465f}
+h1{margin:0 0 8px;font-size:18px;letter-spacing:.05em}
+h1 small{font-weight:normal;color:var(--sub);font-size:12px;margin-left:6px}
+.row{display:flex;gap:8px;align-items:center}
+input[type=search]{flex:1;padding:9px 12px;border-radius:10px;border:1px solid #1c5d7a;background:#082a3a;color:var(--ink);font-size:15px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:6px 12px;border-radius:999px;border:1px solid #1c5d7a;background:transparent;color:var(--sub);font-size:13px;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--acc);color:#04202a;border-color:var(--acc);font-weight:600}
+.btn{flex:none;padding:8px 10px;border-radius:10px;border:1px solid #1c5d7a;background:#082a3a;color:var(--sub);font-size:13px;cursor:pointer}
+.btn.on{color:#04202a;background:var(--seen);border-color:var(--seen)}
+.stat{color:var(--sub);font-size:12px;margin-top:6px}
+.bar{height:4px;background:#12465f;border-radius:4px;margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--seen);width:0;transition:width .3s}
+main{padding:12px;max-width:1200px;margin:0 auto}
+h2{font-size:15px;color:var(--acc);margin:18px 4px 8px;border-left:3px solid var(--acc);padding-left:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.card{background:var(--card);border-radius:12px;overflow:hidden;position:relative;border:1px solid #12465f}
+.card.seen{border-color:var(--seen)}
+.ph{aspect-ratio:4/3;background:#082a3a;cursor:zoom-in;display:block;width:100%;object-fit:cover}
+.info{padding:8px 10px 10px}
+.jp{font-size:14px;font-weight:600;line-height:1.35}
+.en{font-size:11px;color:var(--sub);margin-top:2px}
+.tags{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+.tg{font-size:10px;padding:1px 6px;border-radius:6px;background:#12465f;color:var(--sub)}
+.tg.end{background:#5b2d6b;color:#f2d4ff}
+.chk{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.8);background:rgba(0,0,0,.35);color:#fff;font-size:15px;cursor:pointer}
+.card.seen .chk{background:var(--seen);border-color:var(--seen);color:#04202a}
+.empty{color:var(--sub);text-align:center;padding:40px}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:16px}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:75vh;border-radius:8px}
+#lb .cap{margin-top:12px;text-align:center}
+#lb a{color:var(--acc);font-size:12px}
+footer{color:var(--sub);font-size:11px;text-align:center;padding:24px}
+footer a{color:var(--sub)}
+</style>
+</head>
+<body>
+<header>
+  <h1>シミラン諸島 生物図鑑<small id="total"></small></h1>
+  <div class="row">
+    <input type="search" id="q" placeholder="和名・英名で検索（例：エイ / shark）">
+    <button class="btn" id="seenOnly">★見た</button>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="stat" id="stat"></div>
+  <div class="bar"><i id="barfill"></i></div>
+</header>
+<main id="main"></main>
+<div id="lb"><img id="lbimg" alt=""><div class="cap"><div class="jp" id="lbjp"></div><div class="en" id="lben"></div><a id="lblink" href="#" target="_blank" rel="noopener">元ページで解説を読む</a></div></div>
+<footer>写真・データ出典：<a href="https://hobo-ya-similan.com/similan/fish/" target="_blank" rel="noopener">ほうぼう屋 シミラン店「シミラン諸島の生物ガイド」</a><br>写真は元サイトから直接読み込んでいます。「見た」の記録はこのブラウザ内にだけ保存されます。</footer>
+<script>
+const BASE="https://hobo-ya-similan.com/similan/fish/";
+const CATS=[
+ {id:"bigfish",label:"🦈 大物",d:[["ジンベエザメ","whale-shark"],["オニイトマキエイ（マンタ）","manta-ray"],["トラフザメ（レオパードシャーク）","leopard-shark"],["ネムリブカ（ホワイトチップ）","whitetip-reef-shark"],["ツマグロ（ブラックチップ）","blacktip-reef-sharke"],["メガネモチノウオ（ナポレオン）","napoleon-fish"],["カンムリブダイ","buffalofish"],["オニカマス","great-barracuda"],["ロウニンアジ","giant-trevally"],["タイマイ","hawksbill-turtle"],["アオウミガメ","green-sea-turtle"],["オグロオトメエイ","pink-whipray"],["イソマグロ","dogtooth-tuna"],["マダラトビエイ","spotted-eagle-ray"],["ナースシャーク","nurse-shark"]]},
+ {id:"school",label:"🐟 群れモノ",d:[["ブラックフィンバラクーダ","blackfin-barracuda"],["ピックハンドルバラクーダ","pickhandle-barracuda"],["タイワンカマス","yellowtail-barracuda"],["ギンガメアジ","bigeye-trevally"],["カスミアジ","bluefin-trevally"],["コガネシマアジ","golden-trevally"],["ホソヒラアジ","yellowstripe-scad"],["ツムブリ","rainbow-runner"],["イソマグロ","dogtooth-tuna"],["スギ","cobia"],["グルクマ","indian-mackerel"],["ツバメウオ","longfin-batfish"],["キンセンフエダイ","bigeye-snapper"],["ヨスジフエダイ","bluelined-snapper"],["ホソフエダイ","two-spot-snapper"],["キツネフエフキ","longnose-emperor"],["ノコギリダイ","yellowspot-emperor"],["ハナタカサゴ","lunar-fusilier"],["クマザサハナムロ","neon-fusilier"],["イエローダッシュフュージュラー","yellow-dash-fusilier"],["イエローバックフュージュラー","yellowback-fusilier"],["イエローバンドフュージュラー","yellow-band-fusilier"],["ジャイアントフュージュラー","giant-fusilier"],["アカヒメジ","yellowfin-goatfish"],["ムレハタタテダイ","pennant-coralfish"],["チンアナゴ","spotted-garden-eel"],["スパゲティーイール","whitespotted-garden-eel"],["スカシテンジクダイ","glass-fish"],["イエロースイーパー","yellow-sweeper"],["ホウセキキントキ","duskyfin-bulleye"],["アカマツカサ","red-soldierfish"],["アヤメエビス","big-eyed-soldierfish"],["シマハギ","convict-surgeonfish"],["ジャバラビットフィッシュ","java-rabbitfish"],["キンギョハナダイ","sea-goldie"],["テンジクイサキ","topsail-drummer"],["アカモンガラ","redtoothed-triggerfish"]]},
+ {id:"macro",label:"🔍 小物",d:[["オオモンカエルアンコウ","giant-anglerfish"],["クマドリカエルアンコウ","warty-frogfish"],["ベニカエルアンコウ","spotfin-frogfish"],["ウルマカエルアンコウ","fleckled-anglerfish"],["ニシキフウライウオ","ornate-ghost-pipfish"],["カミソリウオ","ghost-pipefishes"],["ヨウジウオ","pipefish"],["マルチバーパイプフィッシュ","multibar-pipefish"],["ウミテング","sea-moth"],["スターリードラゴネット","starry-dragonet"],["アケボノハゼ","purple-fire-goby"],["ハタタテハゼ","fire-goby"],["ヒメダテハゼ","steinitzs-hrimp-goby"],["ブラックパートナーゴビー","black-partner-goby"],["ハタタテサンカクハゼ","blotched-sandgoby"],["ミズタマハゼ","sixspot-goby"],["ホソガラスハゼ","white-line-eawhip-goby"],["アンダマンジョーフィッシュ","andaman-jawfish"],["カクレクマノミ","common-clownfish"],["クマノミ","clarks-anemonefish"],["クダゴンベ","longnose-hawkfish"],["ホシゴンベ","blacksided-hawkfish"],["シモフリタナバタウオ","comet-longfin"],["ハナダイギンポ","persian-blenny"],["インポスターブレニー","imposter-blenny"],["イヤースポットブレニー","earspot-blenny"],["ルボックスブレニー","lubbocks-blenny"],["タテジマヘビギンポ","tropical-striped-triplefin"],["ハナミノカサゴ","red-lionfish"],["キリンミノカサゴ","zebra-lionfish"],["ネッタイミノカサゴ","spotfin-lionfish"],["ヒレボシミノカサゴ","dwarf-lionfish"],["サツマカサゴ","humpbacked-scorpionfish"],["ウルマカサゴ","hairy-stingfish"],["フサカサゴ","fire-fish"],["ハダカハオコゼ","leaf-scorpionfish"],["オニダルマオコゼ","stone-fish"],["モンダルマカレイ","maimed-flounder"],["ヤッコエイ","bluespotted-stingray"],["イバラエイ","porcupine-ray"],["アカエソ","red-lizard-fish"],["マツカサウオ","pineapple-fish"],["アオヤガラ","bluespotted-cornetfish"],["ヘラヤガラ","trumpetfishes"],["ヒトヅラハリセンボン","black-blotched-porcupinefish"],["ネズミフグ","porcupine-fish"],["コクテンフグ","blackspotted-puffer"],["アラレフグ","blue-spotted-puffer"],["ケショウフグ","map-puffer"],["モヨウフグ","stellate-puffer"],["ミナミハコフグ","yellow-boxfish"],["モンガラカワハギ","clown-triggerfish"],["ゴマモンガラ","titan-triggerfish"],["ソウシハギ","scrawled-filefishz"],["テングカワハギ","orange-spotted-filefish"],["ツマリテングハギ","spotted-unicornfish"],["ミヤコテングハギ","bluespine-unicornfish"],["ツノダシ","moorish-idol"],["ゴマアイゴ","orange-spotted-spinefoot"],["アデヤッコ","yellowface-angelfish"],["ニシキヤッコ","regal-angelfish"],["サザナミヤッコ","semicircle-angelfish"],["シテンヤッコ","threespot-angelfish"],["フエヤッコダイ","pyramid-butterflyfish"],["ゴマチョウチョウウオ","speckled-butterflyfish"],["レモンチョウチョウウオ","dotted-butterflyfish"],["ブラックピラミッドバタフライフィッシュ","black-pyramid-butterflyfish"],["ムスジコショウダイ","oriental-sweetlips"],["クロコショウダイ","black-sweetlip"],["ナンヨウブダイ","blunt-headed-parrotfish"],["イロブダイ","bicolour-parrotfish"],["ユカタハタ","rock-cod"],["アズキハタ","slender-grouper"],["マダラハタ","camouflage-grouper"],["サラサハタ","highfinned-grouper"],["ヤイトハタ","malabar-grouper"],["イケカツオ","doublespotted-lysan"],["ヤマブキスズメダイ","golden-damselfish"],["デバスズメダイ","blue-green-chromis"],["ミツボシクロスズメダイ","threespot-dascyllus"],["ローランドダムゼル","rollands-damsel"],["アンダマンダムゼル","andaman-damsel"],["オビテンスモドキ","rock-mover-wasse"],["ツユベラ（幼魚）","african-coris"],["ホンソメワケベラ","bluestreak-cleaner-wrasse"]]},
+ {id:"andaman",label:"⭐ 固有種",d:[["タイガーテールシーホース","tigertail-seahorse"],["アンダマンミミックファイルフィッシュ","andaman-mimic-filefish"],["スターリードラゴネット","starry-dragonet"],["イヤースポットブレニー","earspot-blenny"],["オーロラパートナーゴビー","pink-bar-shrimp-goby"],["ブラックチンスリーパーゴビー","black-chin-sleeper-goby"],["トマトアネモネフィッシュ","tomato-anemonefish"],["スカンクアネモネフィッシュ","skunk-anemonefish"],["インディアンバガボンドバタフライフィッシュ","indian-vagabond-batterflyfish"],["コラーレバタフライフィッシュ","red-tailed-butterflyfish"],["マダガスカルバタフライフィッシュ","madagascar-butterflyfish"],["ブラックピラミッドバタフライフィッシュ","black-pyramid-butterflyfish"],["インディアンバナーフィッシュ","horned-bannerfish"],["インディアンダッシラス","cloudy-dascyllus"],["アンダマンダムゼル","andaman-amsel"],["インディアンドラゴン","indian-triggerfish"],["アンダマンフォックスフェース","andaman-foxface"],["パウダーブルーサージョンフィッシュ","powder-blue-surgeonfish"],["インディアンミミックサージョンフィッシュ","indian-ocean-mimic-surgeonfish"],["タテジマキンチャクダイ","emperor-angelfish"],["ワヌケヤッコ","blue-ringed-angelfish"],["アンダマンスウィートリップス","andaman-sweetlips"],["マッコスカーズドワーフラス","mccoskers-dwarf-wrrase"],["インディアンフレームフェアリーバスレット","indian-flame-fairy-basslet"],["エヴァンスフェアリーバスレット","yellowtail-fairy-basslet"],["ハニーカムモレイ","honeycomb-moray"],["インディアンモレイ","laced-moray"]]},
+ {id:"others",label:"🦐 その他の生物",d:[["フリソデエビ","harlequin-shrimp"],["スザクサラサエビ","durban-hinge-beck-shrimp"],["オトヒメエビ","banded-coral-shrimp"],["アカシマシラヒゲエビ","pacific-cleaner-shrimp"],["オシャレカクレエビ","emperor-shrimp"],["タペストリーシュリンプ","tapestry-shrimp"],["ミカヅキコモンエビ","rock-shrimp"],["ソリハシコモンエビ","rock-cleaner-shrimp"],["ゴシキエビ","painted-spiny-lobster"],["モンハナシャコ","peacock-mantis-shrimp"],["オオアカヒズメガニ","etisussplendidus"],["オオアカホシサンゴガニ","red-spotted-coral-crab"],["コホシカニダマシ","porcelain-anemone-rab"],["モクズショイ","decorator-crab"],["コブシメ","pharaoh-cuttlefish"],["マーブルドオクトパス","marbled-octopus"],["ワモンダコ","common-reef-octopus"],["タイガーエッグコウリー","tiger-egg-cowrie"],["ウミウサギ","egg-cowrie"],["モルディブスポンジスネイル","coriocella-hibyae"],["ミカドウミウシ","spanish-dancer"],["アカボシウミウシ","gymnodoris-alba"],["ブッシュドノエル ウミウシ","jorunna-rubescens"],["デルマトブランクス ゴナトフォラ","dermatobranchus-gonatophora"],["ヒブサミノウミウシ","indian-phidiana"],["イガグリウミウシ","cadlinella-ornatissima"],["キイボキヌハダウミウシ","gymnodoris-rubropapillosa"],["キイロウミウシ","black-margined-glossodoris"],["コンペイトウウミウシ","batangas-halgerda"],["レティキュレイテッドワートスラッグ","reticulated-wart-slug"],["マダライロウミウシ","tryons-risbecia"],["モンジャウミウシ","girdred-glossodoris"],["モザイクウミウシ","halgerda-tessellata"],["ムカデミノウミウシ","serpent-Pteraeolidia"],["オトヒメウミウシ","chromodoris-kuniei"],["パイナップルウミウシ","halgerda-willey"],["シンデレラウミウシ","purple-sea-slug"],["シロタエイロウミウシ","glossodoris-pallidas"],["シロウネイボウミウシ","striated-phyllidiopsis"],["タテヒダイボウミウシ","celestial-phyllidia"],["ハナヒゲウツボ","ribbon-eel"],["ドクウツボ","giant-moray"],["ヘリゴイシウツボ","fimbriated-moray"],["クモウツボ","snowflake-moray"],["サビウツボ","white-eyed-moray"],["ゼブラウツボ","zebra-moray"],["シマウミヘビ","harlequin-snake-eel"],["オニヒトデ","crown-of-thorns-starfish"],["アオヒトデ","blue-sea-star"],["ガンガゼ","diadem-urchin"],["ウミシダ","feather-star"],["イバラカンザシ","christmas-tree-worm"],["タコクラゲ","papuan-jelly"],["ハナヤサイサンゴ","antler-coral"],["キッカサンゴ（キャベツコーラル）","cauliflower-coral"],["ウミトサカ","alcyonacea"],["ウミウチワ","sea-fan"]]},
+ {id:"islands",label:"🌴 陸上の生物",d:[["ヤドカリ","hermit_crab"],["ミナミオカガニ","cardisoma_carnifex"],["ヤシガニ","giant_hermit_crab"],["ベンガルオオトカゲ","bengal_monitor"],["アミメニシキヘビ","reticulated_python"],["オオコウモリ","bat"],["ミノバト","nicobar_pigeon"],["タイマイ","hawksbill_turtle"],["リス","squirrel"],["ゴバンノアシ","barringtonia_asiatica"],["モンパノキ","beach_heliotrope"],["アダン","pandanus"],["ヤシ","palm_tree"],["ヒルガオ","false_bindweed"],["バットレスルーツ","buttress_roots"],["ハスノハギリ","hernandia_nymphaeifolia"],["クサトベラ","beach_naupaka"]]}
+];
+// 英名（ファイル名から生成、綴りの崩れているものは補正）
+const FIX={"blacktip-reef-sharke":"Blacktip Reef Shark","buffalofish":"Bumphead Parrotfish","scrawled-filefishz":"Scrawled Filefish","steinitzs-hrimp-goby":"Steinitz's Shrimp Goby","rock-mover-wasse":"Rockmover Wrasse","mccoskers-dwarf-wrrase":"McCosker's Flasher Wrasse","porcelain-anemone-rab":"Porcelain Anemone Crab","andaman-amsel":"Andaman Damsel","indian-vagabond-batterflyfish":"Indian Vagabond Butterflyfish","ornate-ghost-pipfish":"Ornate Ghost Pipefish","white-line-eawhip-goby":"Whip Coral Goby","etisussplendidus":"Etisus splendidus","coriocella-hibyae":"Coriocella hibyae","gymnodoris-alba":"Gymnodoris alba","jorunna-rubescens":"Jorunna rubescens","dermatobranchus-gonatophora":"Dermatobranchus gonatophora","cadlinella-ornatissima":"Cadlinella ornatissima","gymnodoris-rubropapillosa":"Gymnodoris rubropapillosa","halgerda-tessellata":"Halgerda tessellata","serpent-Pteraeolidia":"Pteraeolidia semperi","chromodoris-kuniei":"Chromodoris kuniei","halgerda-willey":"Halgerda willeyi","glossodoris-pallidas":"Glossodoris pallida","alcyonacea":"Soft Coral","cardisoma_carnifex":"Cardisoma carnifex","barringtonia_asiatica":"Barringtonia asiatica","hernandia_nymphaeifolia":"Hernandia nymphaeifolia","clarks-anemonefish":"Clark's Anemonefish","steinitzs":"","lubbocks-blenny":"Lubbock's Blenny","rollands-damsel":"Rolland's Damsel","tryons-risbecia":"Tryon's Risbecia","girdred-glossodoris":"Girdled Glossodoris","fleckled-anglerfish":"Freckled Frogfish","duskyfin-bulleye":"Duskyfin Bullseye","black-sweetlip":"Black Sweetlips","fire-fish":"Coral Scorpionfish","bat":"Fruit Bat","squirrel":"Squirrel","durban-hinge-beck-shrimp":"Durban Hinge-beak Shrimp","andaman-damsel":"Andaman Damsel"};
+const en=f=>FIX[f]||f.split(/[-_]/).map(w=>w[0].toUpperCase()+w.slice(1)).join(" ");
+const ENDEMIC=new Set(CATS.find(c=>c.id==="andaman").d.map(x=>x[1]));
+const all=[];CATS.forEach(c=>c.d.forEach(([jp,f])=>all.push({jp,f,en:en(f),cat:c.id,label:c.label,src:BASE+c.id+"/img/"+f+".webp",key:jp.replace(/（.*?）|\s/g,"")})));
+let seen={};try{seen=JSON.parse(localStorage.getItem("similanSeen")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("similanSeen",JSON.stringify(seen))}catch(e){}};
+let cur="all",seenOnly=false;
+const kana=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+96)).toLowerCase();
+const tabs=document.getElementById("tabs");
+[{id:"all",label:"すべて"},...CATS].forEach(c=>{const b=document.createElement("button");b.className="tab"+(c.id==="all"?" on":"");b.textContent=c.label+(c.d?` ${c.d.length}`:"");b.onclick=()=>{cur=c.id;[...tabs.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");render();window.scrollTo(0,0)};tabs.appendChild(b)});
+document.getElementById("q").oninput=render;
+document.getElementById("seenOnly").onclick=e=>{seenOnly=!seenOnly;e.target.classList.toggle("on",seenOnly);render()};
+function card(x){
+ const d=document.createElement("div");d.className="card"+(seen[x.key]?" seen":"");
+ const tags=(cur==="all"?`<span class="tg">${x.label.replace(/^\S+\s/,"")}</span>`:"")+(ENDEMIC.has(x.f)&&x.cat!=="andaman"?`<span class="tg end">固有種</span>`:"")+(x.cat==="andaman"&&cur==="all"?"":"");
+ d.innerHTML=`<img class="ph" loading="lazy" src="${x.src}" alt="${x.jp}"><button class="chk" title="見た！">${seen[x.key]?"★":"☆"}</button><div class="info"><div class="jp">${x.jp}</div><div class="en">${x.en}</div>${tags?`<div class="tags">${tags}</div>`:""}</div>`;
+ d.querySelector(".ph").onclick=()=>openLb(x);
+ d.querySelector(".chk").onclick=()=>{if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render()};
+ return d;
+}
+function render(){
+ const q=kana(document.getElementById("q").value.trim());
+ const main=document.getElementById("main");main.innerHTML="";
+ const match=x=>(!q||kana(x.jp).includes(q)||x.en.toLowerCase().includes(q))&&(!seenOnly||seen[x.key]);
+ let shown=0;
+ const groups=cur==="all"?CATS:CATS.filter(c=>c.id===cur);
+ const used=new Set();
+ groups.forEach(c=>{
+  const items=all.filter(x=>x.cat===c.id&&match(x)&&!(cur==="all"&&used.has(x.key)));
+  items.forEach(x=>used.add(x.key));
+  if(!items.length)return;
+  if(cur==="all"){const h=document.createElement("h2");h.textContent=`${c.label}（${items.length}）`;main.appendChild(h)}
+  const g=document.createElement("div");g.className="grid";items.forEach(x=>g.appendChild(card(x)));main.appendChild(g);shown+=items.length;
+ });
+ if(!shown)main.innerHTML='<div class="empty">該当する生物がいません</div>';
+ const uniq=new Set(all.map(x=>x.key)).size,n=Object.keys(seen).filter(k=>all.some(x=>x.key===k)).length;
+ document.getElementById("total").textContent=`${uniq}種`;
+ document.getElementById("stat").textContent=`表示 ${shown}件 ・ 見た ${n} / ${uniq}種（${Math.round(n/uniq*100)}%）`;
+ document.getElementById("barfill").style.width=(n/uniq*100)+"%";
+}
+const lb=document.getElementById("lb");
+function openLb(x){document.getElementById("lbimg").src=x.src;document.getElementById("lbjp").textContent=x.jp;document.getElementById("lben").textContent=x.en;document.getElementById("lblink").href=BASE+x.cat+"/";lb.classList.add("on")}
+lb.onclick=e=>{if(e.target.tagName!=="A")lb.classList.remove("on")};
+render();
+</script>
+</body>
+</html>
