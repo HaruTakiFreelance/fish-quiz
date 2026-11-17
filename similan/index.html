@@ -42,17 +42,44 @@ h2{font-size:15px;color:var(--acc);margin:18px 4px 8px;border-left:3px solid var
 .jtabs{display:flex;gap:6px;overflow-x:auto;padding-top:6px;scrollbar-width:none}
 .jtab{flex:none;padding:4px 10px;border-radius:999px;border:1px solid #1c5d7a;background:transparent;color:var(--sub);font-size:12px;cursor:pointer}
 .jtab.on{background:#e8f6fb;color:#04202a}
-#lb .box{background:var(--card);border-radius:12px;max-width:560px;width:100%;max-height:92vh;overflow:auto}
-#lb .box img{width:100%;max-height:50vh;object-fit:contain;background:#000;border-radius:12px 12px 0 0;display:block}
-#lb .cap{text-align:left;padding:12px 14px 16px;margin:0}
-.dl{margin:10px 0 0;font-size:13px;line-height:1.6}.dl b{color:var(--acc);font-weight:600;display:block;font-size:11px;margin-top:8px}
-.warn{font-size:11px;color:#fbecb5;margin-top:8px}
 .empty{color:var(--sub);text-align:center;padding:40px}
-#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:16px}
-#lb.on{display:flex}
-#lb img{max-width:100%;max-height:75vh;border-radius:8px}
-#lb .cap{margin-top:12px;text-align:center}
-#lb a{color:var(--acc);font-size:12px}
+/* ===== 詳細シート ===== */
+#lb{position:fixed;inset:0;z-index:20;display:none}
+#lb.on{display:block}
+#lb .shade{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .2s}
+#lb .sheet{position:absolute;left:0;right:0;bottom:0;max-height:92vh;overflow-y:auto;background:#0b2d3e;border-radius:18px 18px 0 0;animation:up .25s ease-out;padding-bottom:env(safe-area-inset-bottom)}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.grab{width:40px;height:5px;border-radius:3px;background:#3b6b80;margin:8px auto 0}
+.sh-top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#0b2d3e}
+.ic{width:38px;height:38px;border-radius:50%;border:none;background:#12465f;color:var(--ink);font-size:18px;cursor:pointer}
+.ic:disabled{opacity:.3}
+.sh-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#000;display:block}
+.sh-body{padding:16px 18px 24px;text-align:left}
+.sh-title{font-size:21px;font-weight:700;line-height:1.3}
+.sh-en{font-size:13px;color:var(--sub);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{font-size:12px;padding:4px 10px;border-radius:999px;background:#12465f;color:#cfe9f3}
+.chip i{opacity:.85}
+.sec{margin-top:18px}
+.sec h3{margin:0 0 6px;font-size:12px;color:var(--acc);letter-spacing:.08em;font-weight:600}
+.sec p{margin:0;font-size:15px;line-height:1.75;color:#e3f2f8}
+.jbox{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:12px;background:#082a3a;border:1px solid #12465f}
+.jbox .jb{flex:none;font-size:12px;padding:3px 8px;margin-top:2px}
+.jbox p{font-size:14px;line-height:1.65}
+.warn{margin-top:14px;font-size:12px;line-height:1.6;color:#fbecb5;background:#3a3112;border-radius:10px;padding:8px 10px}
+.acts{display:flex;gap:10px;margin-top:22px}
+.acts button,.acts a{flex:1;text-align:center;padding:12px;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid #1c5d7a;background:#082a3a;color:var(--ink)}
+.acts .on{background:var(--seen);border-color:var(--seen);color:#04202a}
+.pos{font-size:12px;color:var(--sub)}
+@media(min-width:760px){
+ #lb .sheet{left:50%;top:50%;bottom:auto;right:auto;transform:translate(-50%,-50%);width:min(900px,92vw);max-height:86vh;border-radius:18px;animation:fade .2s;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;overflow:hidden}
+ .grab{display:none}
+ .sh-top{grid-column:1/3}
+ .sh-img{height:100%;aspect-ratio:auto;max-height:calc(86vh - 50px)}
+ .sh-body{overflow-y:auto;max-height:calc(86vh - 50px)}
+}
+.card{cursor:pointer}
 footer{color:var(--sub);font-size:11px;text-align:center;padding:24px}
 footer a{color:var(--sub)}
 </style>
@@ -70,7 +97,14 @@ footer a{color:var(--sub)}
   <div class="bar"><i id="barfill"></i></div>
 </header>
 <main id="main"></main>
-<div id="lb"><div class="box"><img id="lbimg" alt=""><div class="cap"><div class="jp" id="lbjp"></div><div class="en" id="lben"></div><div class="dl" id="lbdl"></div><div style="margin-top:12px"><a id="lblink" href="#" target="_blank" rel="noopener">元ページの解説を読む →</a></div></div></div></div>
+<div id="lb" role="dialog" aria-modal="true">
+  <div class="shade"></div>
+  <div class="sheet" id="sheet">
+    <div class="sh-top" style="grid-column:1/3"><button class="ic" id="prev" aria-label="前へ">‹</button><span class="pos" id="pos"></span><span><button class="ic" id="next" aria-label="次へ">›</button> <button class="ic" id="close" aria-label="閉じる">✕</button></span></div>
+    <img class="sh-img" id="lbimg" alt="">
+    <div class="sh-body" id="lbbody"></div>
+  </div>
+</div>
 <footer>説明文・科と属・日本での分布はClaudeが独自にまとめた目安です（「要確認」付きは種の特定や分布に自信がないもの）。<br>写真・掲載種の出典：<a href="https://hobo-ya-similan.com/similan/fish/" target="_blank" rel="noopener">ほうぼう屋 シミラン店「シミラン諸島の生物ガイド」</a><br>写真は元サイトから直接読み込んでいます。「見た」の記録はこのブラウザ内にだけ保存されます。</footer>
 <script src="data.js"></script>
 <script>
@@ -101,16 +135,16 @@ document.getElementById("seenOnly").onclick=e=>{seenOnly=!seenOnly;e.target.clas
 function card(x){
  const d=document.createElement("div");d.className="card"+(seen[x.key]?" seen":"");
  const tags=(cur==="all"?`<span class="tg">${x.label.replace(/^\S+\s/,"")}</span>`:"")+(ENDEMIC.has(x.f)&&x.cat!=="andaman"?`<span class="tg end">固有種</span>`:"")+(x.cat==="andaman"&&cur==="all"?"":"");
- d.innerHTML=`<img class="ph" loading="lazy" src="${x.src}" alt="${x.jp}"><button class="chk" title="見た！">${seen[x.key]?"★":"☆"}</button><div class="info"><div class="jp">${x.jp}</div><div class="en">${x.en}</div>${x.fam?`<div class="fam">${x.fam}${x.gen?` <i>${x.gen}</i>属`:""}</div>`:""}${x.j!=null?`<div class="tags"><span class="jb j${x.j}">${JS[x.j]}</span></div>`:""}${tags?`<div class="tags">${tags}</div>`:""}</div>`;
- d.querySelector(".ph").onclick=()=>openLb(x);
- d.querySelector(".chk").onclick=()=>{if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render()};
+ d.innerHTML=`<img class="ph" loading="lazy" src="${x.src}" alt="${x.jp}"><button class="chk" title="見た！">${seen[x.key]?"★":"☆"}</button><div class="info"><div class="jp">${x.jp}</div><div class="en">${x.en}</div>${x.fam?`<div class="fam">${x.fam}${x.gen?` <i>${x.gen}</i>属`:""}</div>`:""}<div class="tags">${x.j!=null?`<span class="jb j${x.j}">${JS[x.j]}</span>`:""}${tags}</div></div>`;
+ d.onclick=()=>openLb(x);
+ d.querySelector(".chk").onclick=e=>{e.stopPropagation();if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render()};
  return d;
 }
 function render(){
  const q=kana(document.getElementById("q").value.trim());
  const main=document.getElementById("main");main.innerHTML="";
  const match=x=>(!q||kana(x.jp).includes(q)||x.en.toLowerCase().includes(q)||kana(x.fam).includes(q)||x.gen.toLowerCase().includes(q))&&(!seenOnly||seen[x.key])&&(jf==="all"||x.j===jf);
- let shown=0;
+ let shown=0;LIST=[];
  const groups=cur==="all"?CATS:CATS.filter(c=>c.id===cur);
  const used=new Set();
  groups.forEach(c=>{
@@ -118,7 +152,7 @@ function render(){
   items.forEach(x=>used.add(x.key));
   if(!items.length)return;
   if(cur==="all"){const h=document.createElement("h2");h.textContent=`${c.label}（${items.length}）`;main.appendChild(h)}
-  const g=document.createElement("div");g.className="grid";items.forEach(x=>g.appendChild(card(x)));main.appendChild(g);shown+=items.length;
+  const g=document.createElement("div");g.className="grid";items.forEach(x=>{LIST.push(x);g.appendChild(card(x))});main.appendChild(g);shown+=items.length;
  });
  if(!shown)main.innerHTML='<div class="empty">該当する生物がいません</div>';
  const uniq=new Set(all.map(x=>x.key)).size,n=Object.keys(seen).filter(k=>all.some(x=>x.key===k)).length;
@@ -126,9 +160,33 @@ function render(){
  document.getElementById("stat").textContent=`表示 ${shown}件 ・ 見た ${n} / ${uniq}種（${Math.round(n/uniq*100)}%）`;
  document.getElementById("barfill").style.width=(n/uniq*100)+"%";
 }
-const lb=document.getElementById("lb");
-function openLb(x){document.getElementById("lbimg").src=x.src;document.getElementById("lbjp").textContent=x.jp;document.getElementById("lben").textContent=x.en;document.getElementById("lblink").href=BASE+x.cat+"/";document.getElementById("lbdl").innerHTML=`<b>分類</b>${x.fam||"—"}${x.gen?` ・ <i>${x.gen}</i>属`:""}<b>日本では</b><span class="jb j${x.j}">${JS[x.j]}</span> ${x.jt}<b>特徴</b>${x.desc}${x.unsure?`<div class="warn">※要確認：種の特定や日本での分布に不確かな点があります</div>`:""}`;lb.classList.add("on")}
-lb.onclick=e=>{if(e.target===lb||e.target.id==="lbimg")lb.classList.remove("on")};
+let LIST=[],idx=-1;
+const lb=document.getElementById("lb"),sheet=document.getElementById("sheet");
+function openLb(x){idx=LIST.indexOf(x);if(idx<0){LIST=[x];idx=0}show();lb.classList.add("on");document.body.style.overflow="hidden"}
+function closeLb(){lb.classList.remove("on");document.body.style.overflow=""}
+function show(){
+ const x=LIST[idx];
+ document.getElementById("lbimg").src=x.src;document.getElementById("lbimg").alt=x.jp;
+ document.getElementById("pos").textContent=`${idx+1} / ${LIST.length}`;
+ document.getElementById("prev").disabled=idx<=0;document.getElementById("next").disabled=idx>=LIST.length-1;
+ const s=!!seen[x.key];
+ document.getElementById("lbbody").innerHTML=`
+  <div class="sh-title">${x.jp}</div><div class="sh-en">${x.en}</div>
+  <div class="chips">${x.fam?`<span class="chip">${x.fam}</span>`:""}${x.gen?`<span class="chip"><i>${x.gen}</i> 属</span>`:""}<span class="chip">${x.label}</span>${ENDEMIC.has(x.f)?`<span class="chip" style="background:#5b2d6b;color:#f2d4ff">アンダマン海の固有種</span>`:""}</div>
+  ${x.desc?`<div class="sec"><h3>特徴</h3><p>${x.desc}</p></div>`:""}
+  <div class="sec"><h3>日本では</h3><div class="jbox"><span class="jb j${x.j}">${JS[x.j]}</span><p>${x.jt}</p></div></div>
+  ${x.unsure?`<div class="warn">⚠️ 種の特定や日本での分布に不確かな点があります（要確認）</div>`:""}
+  <div class="acts"><button id="seenBtn" class="${s?"on":""}">${s?"★ 見た！":"☆ 見たら記録"}</button><a href="${BASE+x.cat+"/"}" target="_blank" rel="noopener">元サイトの解説 ↗</a></div>`;
+ document.getElementById("seenBtn").onclick=()=>{if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render();idx=Math.max(0,LIST.findIndex(y=>y.key===x.key));if(LIST[idx]&&LIST[idx].key===x.key)show();else closeLb()};
+ sheet.scrollTop=0;document.getElementById("lbbody").scrollTop=0;
+}
+const go=d=>{const n=idx+d;if(n>=0&&n<LIST.length){idx=n;show()}};
+document.getElementById("prev").onclick=()=>go(-1);document.getElementById("next").onclick=()=>go(1);
+document.getElementById("close").onclick=closeLb;lb.querySelector(".shade").onclick=closeLb;
+document.addEventListener("keydown",e=>{if(!lb.classList.contains("on"))return;if(e.key==="Escape")closeLb();if(e.key==="ArrowLeft")go(-1);if(e.key==="ArrowRight")go(1)});
+let tx=0,ty=0;const im=document.getElementById("lbimg");
+im.addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+im.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(dx<0?1:-1)},{passive:true});
 render();
 </script>
 </body>
