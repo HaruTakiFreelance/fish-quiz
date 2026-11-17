@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>シミラン諸島 生物図鑑</title>
 <style>
-:root{--bg:#06202e;--card:#0d3347;--ink:#e8f6fb;--sub:#8fc3d6;--acc:#3fd0c9;--seen:#f4c54b}
+:root{--bg:#06202e;--card:#0d3347;--ink:#e8f6fb;--sub:#8fc3d6;--acc:#3fd0c9;--seen:#ff7aa8}
 *{box-sizing:border-box}
 body{margin:0;background:linear-gradient(#06202e,#031018) fixed;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif}
 header{position:sticky;top:0;z-index:5;background:rgba(6,32,46,.94);backdrop-filter:blur(8px);padding:12px 14px 8px;border-bottom:1px solid #12465f}
@@ -20,8 +20,8 @@ input[type=search]{flex:1;padding:9px 12px;border-radius:10px;border:1px solid #
 .btn{flex:none;padding:8px 10px;border-radius:10px;border:1px solid #1c5d7a;background:#082a3a;color:var(--sub);font-size:13px;cursor:pointer}
 .btn.on{color:#04202a;background:var(--seen);border-color:var(--seen)}
 .stat{color:var(--sub);font-size:12px;margin-top:6px}
-.bar{height:4px;background:#12465f;border-radius:4px;margin-top:4px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--seen);width:0;transition:width .3s}
+.stat{display:flex;justify-content:space-between;align-items:center}
+.copy{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--seen);background:transparent;color:var(--seen);cursor:pointer}
 main{padding:12px;max-width:1200px;margin:0 auto}
 h2{font-size:15px;color:var(--acc);margin:18px 4px 8px;border-left:3px solid var(--acc);padding-left:8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
@@ -89,12 +89,11 @@ footer a{color:var(--sub)}
   <h1>シミラン諸島 生物図鑑<small id="total"></small></h1>
   <div class="row">
     <input type="search" id="q" placeholder="和名・英名・科名で検索（例：エイ / shark / ハタ科）">
-    <button class="btn" id="seenOnly">★見た</button>
+    <button class="btn" id="seenOnly">♥ 見たい</button>
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="jtabs" id="jtabs"></div>
-  <div class="stat" id="stat"></div>
-  <div class="bar"><i id="barfill"></i></div>
+  <div class="stat"><span id="stat"></span><button class="copy" id="copy" style="display:none">📋 見たいリストをコピー</button></div>
 </header>
 <main id="main"></main>
 <div id="lb" role="dialog" aria-modal="true">
@@ -105,7 +104,7 @@ footer a{color:var(--sub)}
     <div class="sh-body" id="lbbody"></div>
   </div>
 </div>
-<footer>説明文・科と属・日本での分布はClaudeが独自にまとめた目安です（「要確認」付きは種の特定や分布に自信がないもの）。<br>写真・掲載種の出典：<a href="https://hobo-ya-similan.com/similan/fish/" target="_blank" rel="noopener">ほうぼう屋 シミラン店「シミラン諸島の生物ガイド」</a><br>写真は元サイトから直接読み込んでいます。「見た」の記録はこのブラウザ内にだけ保存されます。</footer>
+<footer>「見たい」リストはこのブラウザ内にだけ保存されます。<br>説明文・科と属・日本での分布はClaudeが独自にまとめた目安です（「要確認」付きは種の特定や分布に自信がないもの）。<br>写真・掲載種の出典：<a href="https://hobo-ya-similan.com/similan/fish/" target="_blank" rel="noopener">ほうぼう屋 シミラン店「シミラン諸島の生物ガイド」</a><br>写真は元サイトから直接読み込んでいます。</footer>
 <script src="data.js"></script>
 <script>
 const BASE="https://hobo-ya-similan.com/similan/fish/";
@@ -124,8 +123,8 @@ const ENDEMIC=new Set(CATS.find(c=>c.id==="andaman").d.map(x=>x[1]));
 const JL=["日本で見られる","日本ではまれ","日本では見られない"],JS=["🇯🇵 見られる","△ まれ","✕ 見られない"];
 const all=[];CATS.forEach(c=>c.d.forEach(([jp,f])=>{const i=INFO[f]||["","",null,"",""];all.push({jp,f,en:en(f),cat:c.id,label:c.label,src:BASE+c.id+"/img/"+f+".webp",key:jp.replace(/（.*?）|\s/g,""),fam:i[0],gen:i[1],j:i[2],jt:i[3],desc:i[4],unsure:!!i[5]})}));
 let jf="all";const jtabs=document.getElementById("jtabs");[["all","日本：すべて"],[0,JS[0]],[1,JS[1]],[2,JS[2]]].forEach(([v,l])=>{const b=document.createElement("button");b.className="jtab"+(v==="all"?" on":"");b.textContent=l;b.onclick=()=>{jf=v;[...jtabs.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");render()};jtabs.appendChild(b)});
-let seen={};try{seen=JSON.parse(localStorage.getItem("similanSeen")||"{}")}catch(e){}
-const save=()=>{try{localStorage.setItem("similanSeen",JSON.stringify(seen))}catch(e){}};
+let seen={};try{seen=JSON.parse(localStorage.getItem("similanWant")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("similanWant",JSON.stringify(seen))}catch(e){}};
 let cur="all",seenOnly=false;
 const kana=s=>s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+96)).toLowerCase();
 const tabs=document.getElementById("tabs");
@@ -135,7 +134,7 @@ document.getElementById("seenOnly").onclick=e=>{seenOnly=!seenOnly;e.target.clas
 function card(x){
  const d=document.createElement("div");d.className="card"+(seen[x.key]?" seen":"");
  const tags=(cur==="all"?`<span class="tg">${x.label.replace(/^\S+\s/,"")}</span>`:"")+(ENDEMIC.has(x.f)&&x.cat!=="andaman"?`<span class="tg end">固有種</span>`:"")+(x.cat==="andaman"&&cur==="all"?"":"");
- d.innerHTML=`<img class="ph" loading="lazy" src="${x.src}" alt="${x.jp}"><button class="chk" title="見た！">${seen[x.key]?"★":"☆"}</button><div class="info"><div class="jp">${x.jp}</div><div class="en">${x.en}</div>${x.fam?`<div class="fam">${x.fam}${x.gen?` <i>${x.gen}</i>属`:""}</div>`:""}<div class="tags">${x.j!=null?`<span class="jb j${x.j}">${JS[x.j]}</span>`:""}${tags}</div></div>`;
+ d.innerHTML=`<img class="ph" loading="lazy" src="${x.src}" alt="${x.jp}"><button class="chk" title="見たい">${seen[x.key]?"♥":"♡"}</button><div class="info"><div class="jp">${x.jp}</div><div class="en">${x.en}</div>${x.fam?`<div class="fam">${x.fam}${x.gen?` <i>${x.gen}</i>属`:""}</div>`:""}<div class="tags">${x.j!=null?`<span class="jb j${x.j}">${JS[x.j]}</span>`:""}${tags}</div></div>`;
  d.onclick=()=>openLb(x);
  d.querySelector(".chk").onclick=e=>{e.stopPropagation();if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render()};
  return d;
@@ -157,9 +156,11 @@ function render(){
  if(!shown)main.innerHTML='<div class="empty">該当する生物がいません</div>';
  const uniq=new Set(all.map(x=>x.key)).size,n=Object.keys(seen).filter(k=>all.some(x=>x.key===k)).length;
  document.getElementById("total").textContent=`${uniq}種`;
- document.getElementById("stat").textContent=`表示 ${shown}件 ・ 見た ${n} / ${uniq}種（${Math.round(n/uniq*100)}%）`;
- document.getElementById("barfill").style.width=(n/uniq*100)+"%";
+ document.getElementById("stat").textContent=`表示 ${shown}件 ・ 見たい ♥ ${n}種`;document.getElementById("copy").style.display=n?"":"none";
 }
+document.getElementById("copy").onclick=async e=>{
+ const lines=["【シミランで見たい生物】"],used=new Set();CATS.forEach(c=>{const xs=all.filter(x=>x.cat===c.id&&seen[x.key]&&!used.has(x.key));xs.forEach(x=>used.add(x.key));if(xs.length){lines.push("",c.label.replace(/^\S+\s/,""));xs.forEach(x=>lines.push("・"+x.jp))}});
+ const t=lines.join("\n");try{await navigator.clipboard.writeText(t);e.target.textContent="✓ コピーしました"}catch(err){e.target.textContent="コピーできませんでした"}setTimeout(()=>e.target.textContent="📋 見たいリストをコピー",2000)};
 let LIST=[],idx=-1;
 const lb=document.getElementById("lb"),sheet=document.getElementById("sheet");
 function openLb(x){idx=LIST.indexOf(x);if(idx<0){LIST=[x];idx=0}show();lb.classList.add("on");document.body.style.overflow="hidden"}
@@ -176,7 +177,7 @@ function show(){
   ${x.desc?`<div class="sec"><h3>特徴</h3><p>${x.desc}</p></div>`:""}
   <div class="sec"><h3>日本では</h3><div class="jbox"><span class="jb j${x.j}">${JS[x.j]}</span><p>${x.jt}</p></div></div>
   ${x.unsure?`<div class="warn">⚠️ 種の特定や日本での分布に不確かな点があります（要確認）</div>`:""}
-  <div class="acts"><button id="seenBtn" class="${s?"on":""}">${s?"★ 見た！":"☆ 見たら記録"}</button><a href="${BASE+x.cat+"/"}" target="_blank" rel="noopener">元サイトの解説 ↗</a></div>`;
+  <div class="acts"><button id="seenBtn" class="${s?"on":""}">${s?"♥ 見たいリスト入り":"♡ 見たいに追加"}</button><a href="${BASE+x.cat+"/"}" target="_blank" rel="noopener">元サイトの解説 ↗</a></div>`;
  document.getElementById("seenBtn").onclick=()=>{if(seen[x.key])delete seen[x.key];else seen[x.key]=Date.now();save();render();idx=Math.max(0,LIST.findIndex(y=>y.key===x.key));if(LIST[idx]&&LIST[idx].key===x.key)show();else closeLb()};
  sheet.scrollTop=0;document.getElementById("lbbody").scrollTop=0;
 }
